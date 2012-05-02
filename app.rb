@@ -30,16 +30,22 @@ def get_session
 end
 
 get '/upload' do
+  puts "GETTING /upload"
   get_session
   # show a file upload page
   haml :upload
   end
 
   post '/upload' do
+    puts "POSTING TO /upload"
+    p params
     get_session
 
     # upload the posted file to dropbox keeping the same name
-    resp = client.put_file(params[:file].original_filename, params[:file].read)
+    resp = params[:files].map do |file|
+      @client.put_file(file[:filename], file[:tempfile].read)
+    end
+    p resp
     render :text => "Upload successful! File now at #{resp['path']}"
   end
 
@@ -67,10 +73,16 @@ __END__
     %script(src="js/jquery.iframe-transport.js")
     %script(src="js/jquery.fileupload.js")
     :coffeescript
-      alert "rofl"
+      $ ->
+        $('#upload').fileupload({
+          dataType: 'json',
+          autoUpload: true,
+          done: (e,data) ->
+            $.each data.result, (index, file) ->
+              $('<p/>').text(file.name).appendTo(document.body)
+        })
 
 @@ upload
 %h1=@info['email']
-%form{action: 'upload', multipart: true}
-  
-<%= file_field_tag 'file' %><%= submit_tag %><% end %>
+%form{action: 'upload', multipart: true, id: 'upload'}
+  %input(id='fileupload' type='file' name='files[]' data-url='/upload' multiple)
