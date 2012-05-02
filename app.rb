@@ -19,24 +19,28 @@ get '/' do
   end
 end
 
-get '/upload' do
+def get_session
   # Check if user has no dropbox session...re-direct them to authorize
   redirect '/' unless session[:dropbox_session]
-  dbsession = DropboxSession.deserialize(session[:dropbox_session])
-  client = DropboxClient.new(dbsession, :app_folder) #raise an exception if session not authorized
-  info = client.account_info # look up account information
+  @dbsession = DropboxSession.deserialize(session[:dropbox_session])
+  @client = DropboxClient.new(@dbsession, :app_folder) #raise an exception if session not authorized
+  @info = @client.account_info # look up account information
+end
 
-  if request.method != "POST"
-    # show a file upload page
-    render :inline =>
-      "#{info['email']} <br/><%= form_tag({:action => :upload}, :multipart => true) do %><%= file_field_tag 'file' %><%= submit_tag %><% end %>"
-    return
-  else
+get '/upload' do
+  get_session
+  # show a file upload page
+  # <%= form_tag({:action => :upload}, :multipart => true) do %><%= file_field_tag 'file' %><%= submit_tag %><% end %>
+  erb "#{@info['email']} <br/>"
+  end
+
+  post '/upload' do
+    get_session
+
     # upload the posted file to dropbox keeping the same name
     resp = client.put_file(params[:file].original_filename, params[:file].read)
     render :text => "Upload successful! File now at #{resp['path']}"
   end
-end
 
 # dropbox_session.mode = :dropbox
  # redirect '/' unless dropbox_session.authorized?
