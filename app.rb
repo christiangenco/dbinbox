@@ -1,5 +1,7 @@
 require 'sinatra'
 require 'dropbox_sdk'
+require 'coffee-script'
+require 'coffee-filter'
 enable :sessions
 
 get '/' do
@@ -60,6 +62,12 @@ __END__
     %title Dropbox Dropbox
   %body
     =yield
+    %script(src="js/jquery.min.js")
+    %script(src="js/vendor/jquery.ui.widget.js")
+    %script(src="js/jquery.iframe-transport.js")
+    %script(src="js/jquery.fileupload.js")
+    :coffeescript
+      alert "rofl"
 
 @@ upload
 %h1=@info['email']
