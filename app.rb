@@ -46,7 +46,7 @@ get '/upload' do
       @client.put_file(file[:filename], file[:tempfile].read)
     end
     p resp
-    render :text => "Upload successful! File now at #{resp['path']}"
+    "Upload successful! File now at #{resp}"
   end
 
 # dropbox_session.mode = :dropbox
@@ -66,12 +66,21 @@ __END__
 %html
   %head
     %title Dropbox Dropbox
+    %link(rel="stylesheet" href="http://blueimp.github.com/cdn/css/bootstrap.min.css")
+    %link(rel="stylesheet" href="http://blueimp.github.com/cdn/css/bootstrap-responsive.min.css")
+    /[if lt IE 7]
+      %link(rel="stylesheet" href="http://blueimp.github.com/cdn/css/bootstrap-ie6.min.css")
+    %link(rel="stylesheet" href="css/jquery.fileupload-ui.css")
+    %link(rel="stylesheet" href="css/style.css")
   %body
-    =yield
+    .container
+      =yield
     %script(src="js/jquery.min.js")
     %script(src="js/vendor/jquery.ui.widget.js")
     %script(src="js/jquery.iframe-transport.js")
     %script(src="js/jquery.fileupload.js")
+    %script(src="js/jquery.fileupload-fp.js")
+    %script(src="js/jquery.fileupload-ui.js")
     :coffeescript
       $ ->
         $('#upload').fileupload({
@@ -83,6 +92,20 @@ __END__
         })
 
 @@ upload
-%h1=@info['email']
+%h1
+  Send files to 
+  =@info['email']
 %form{action: 'upload', multipart: true, id: 'upload'}
-  %input(id='fileupload' type='file' name='files[]' data-url='/upload' multiple)
+  .row.fileupload-buttonbar.span7
+    %span.btn.btn-success.fileinput-button
+      %i.icon-plus.icon-white
+      %span Add files...
+      %input(type="file" name="files[]" multiple)
+    or drag and drop files onto this page
+    .span5.fileupload-progress.fade
+      .progress.progress-success.progress-striped.active
+      .bar{:style => "width:0%;"}
+      .progress-extended &nbsp;
+    .fileupload-loading
+    %table.table.table-striped
+      %tbody.files(data-toggle="modal-gallery" data-target="#modal-gallery")
