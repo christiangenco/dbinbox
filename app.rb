@@ -30,8 +30,7 @@ end
 get '/upload' do
   get_session
   # show a file upload page
-  # <%= form_tag({:action => :upload}, :multipart => true) do %><%= file_field_tag 'file' %><%= submit_tag %><% end %>
-  erb "#{@info['email']} <br/>"
+  haml :upload
   end
 
   post '/upload' do
@@ -52,3 +51,18 @@ get "/logout" do
   session = {}
   redirect "/"
 end
+
+__END__
+
+@@ layout
+%html
+  %head
+    %title Dropbox Dropbox
+  %body
+    =yield
+
+@@ upload
+%h1=@info['email']
+%form{action: 'upload', multipart: true}
+  
+<%= file_field_tag 'file' %><%= submit_tag %><% end %>
