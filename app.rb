@@ -1,7 +1,7 @@
 require 'sinatra'
 require 'dropbox_sdk'
+require 'json'
 require 'coffee-script'
-require 'coffee-filter'
 enable :sessions
 
 get '/' do
@@ -45,8 +45,18 @@ get '/upload' do
     resp = params[:files].map do |file|
       @client.put_file(file[:filename], file[:tempfile].read)
     end
+
+    resp.map{|f|
+      f[:name] = f["path"].gsub(/^\//,'')
+      f[:size] = 1
+      f[:url] = "hi"
+      f[:thumbnail_url] = "hi"
+      f[:delete_url] = ""
+      f[:delete_type] = "DELETE"
+    }
     p resp
-    "Upload successful! File now at #{resp}"
+    content_type :json
+    resp.to_json
   end
 
 # dropbox_session.mode = :dropbox
@@ -60,52 +70,9 @@ get "/logout" do
   redirect "/"
 end
 
+get "/js/app.js" do
+  content_type "text/javascript"
+  coffee File.open("./app.coffee").read
+end
+
 __END__
-
-@@ layout
-%html
-  %head
-    %title Dropbox Dropbox
-    %link(rel="stylesheet" href="http://blueimp.github.com/cdn/css/bootstrap.min.css")
-    %link(rel="stylesheet" href="http://blueimp.github.com/cdn/css/bootstrap-responsive.min.css")
-    /[if lt IE 7]
-      %link(rel="stylesheet" href="http://blueimp.github.com/cdn/css/bootstrap-ie6.min.css")
-    %link(rel="stylesheet" href="css/jquery.fileupload-ui.css")
-    %link(rel="stylesheet" href="css/style.css")
-  %body
-    .container
-      =yield
-    %script(src="js/jquery.min.js")
-    %script(src="js/vendor/jquery.ui.widget.js")
-    %script(src="js/jquery.iframe-transport.js")
-    %script(src="js/jquery.fileupload.js")
-    %script(src="js/jquery.fileupload-fp.js")
-    %script(src="js/jquery.fileupload-ui.js")
-    :coffeescript
-      $ ->
-        $('#upload').fileupload({
-          dataType: 'json',
-          autoUpload: true,
-          done: (e,data) ->
-            $.each data.result, (index, file) ->
-              $('<p/>').text(file.name).appendTo(document.body)
-        })
-
-@@ upload
-%h1
-  Send files to 
-  =@info['email']
-%form{action: 'upload', multipart: true, id: 'upload'}
-  .row.fileupload-buttonbar.span7
-    %span.btn.btn-success.fileinput-button
-      %i.icon-plus.icon-white
-      %span Add files...
-      %input(type="file" name="files[]" multiple)
-    or drag and drop files onto this page
-    .span5.fileupload-progress.fade
-      .progress.progress-success.progress-striped.active
-      .bar{:style => "width:0%;"}
-      .progress-extended &nbsp;
-    .fileupload-loading
-    %table.table.table-striped
-      %tbody.files(data-toggle="modal-gallery" data-target="#modal-gallery")

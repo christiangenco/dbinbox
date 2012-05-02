@@ -1,0 +1,19 @@
+%h1
+  Send files to 
+  =@info['email']
+%br
+%br
+%form{action: 'upload', multipart: true, id: 'upload'}
+  .row.fileupload-buttonbar.span7
+    %span.btn.btn-success.fileinput-button
+      %i.icon-plus.icon-white
+      %span Add files...
+      %input(type="file" name="files[]" multiple)
+    or drag and drop files onto this page
+    .span5.fileupload-progress.fade
+      .progress.progress-success.progress-striped.active
+      .bar{:style => "width:0%;"}
+      .progress-extended &nbsp;
+    .fileupload-loading
+    %table.table.table-striped
+      %tbody.files(data-toggle="modal-gallery" data-target="#modal-gallery")
