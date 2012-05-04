@@ -9,3 +9,6 @@ obj/
 #Resource Caches
 _ReSharper.*
 *.sln.cache
+
+# Database files
+*.db
