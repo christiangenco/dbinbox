@@ -12,10 +12,16 @@ $ ->
         console.log("filename = " + file.name)
         console.log("size = " + o.formatFileSize(file.size))
         row = $(
-          "<tr class=\"template-upload fade\">" +
-          "<td class=\"preview\"><span class=\"fade\"></span></td>" +
-          "<td class=\"name\"><span></span></td>" +
-          "<td class=\"size\"><span></span></td>" +
+          '<tr class="template-upload fade">' +
+          '<td class="filename-col span7">' +
+          '<img class="sprite s_page_white_get" src="img/icon_spacer.gif" />' +
+          '<span class="name"></span> - ' +
+          '<span class="size"></span>' +
+          '</td>' +
+          '<td class="info-col span4"></td>' +
+          '<td class="status-col span1">' +
+          '<img class="" src="img/ajax-loading-small.gif" />' +
+          '</td>' +
           "</tr>"
         )
 
@@ -32,15 +38,23 @@ $ ->
         console.log("filename = " + file.name)
         console.log("size = " + file.bytes)
         row = $(
-          "<tr class=\"template-upload fade\">" +
-          "<td class=\"preview\"><span class=\"fade\"></span></td>" +
-          "<td class=\"name\"><span></span></td>" +
-          "<td class=\"size\"><span></span></td>" +
+          '<tr class="template-download fade">' +
+          '<td class="filename-col span7">' +
+          '<img class="sprite s_page_white_get" src="img/icon_spacer.gif" />' +
+          '<span class="name"></span> - ' +
+          '<span class="size"></span>' +
+          '</td>' +
+          '<td class="info-col span4"></td>' +
+          '<td class="status-col span1">' +
+          '<img class="sprite s_synced" src="img/icon_spacer.gif" />' +
+          '</td>' +
           "</tr>"
         )
 
         row.find('.name').text(file.name)
         row.find('.size').text(o.formatFileSize(file.size))
+        # update the icon 
+        $(row.find("img.s_page_white_get")[0]).addClass('s_' + file.icon).removeClass("s_page_white_get")
         row.find('.error').text(locale.fileupload.errors[file.error] || file.error) if file.error
         rows = rows.add(row)
       return rows

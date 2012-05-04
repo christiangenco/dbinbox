@@ -71,7 +71,6 @@ get "/logout" do
 end
 
 get "/js/app.js" do
-  return ""
   content_type "text/javascript"
   coffee File.open("./app.coffee").read
 end
