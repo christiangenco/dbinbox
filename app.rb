@@ -9,16 +9,19 @@ enable :sessions
 require 'dm-core'
 require 'dm-migrations'
 require 'dm-validations'
-DataMapper.setup( :default, "sqlite3://#{Dir.pwd}/dropbox_tokens.db" )
+DataMapper.setup( :default, "sqlite3://#{Dir.pwd}/users.db" )
 class User
   include DataMapper::Resource
   property :username, String, :key => true, :required => true, :unique => true, :format => /\w+/
   property :dropbox_session, Text
   property :referral_link, String
-  property :name, String
+  property :display_name, String
+  property :email, String
   property :uid, String
   property :country, String
-  property :freespace, Integer #quota_info["quota"] - quota_info["normal"]
+  property :quota, Integer
+  property :shared, Integer
+  property :normal, Integer
   property :created_at, DateTime
 end
 # Automatically create the tables if they don't exist
@@ -60,16 +63,17 @@ get '/' do
     account_info = dbclient.account_info
     puts "account_info = #{account_info}"
     quota = account_info["quota_info"]
-    freespace = quota["quota"].to_i - quota["normal"].to_i - quota["shared"].to_i
     
     @user = User.new(
       username: session[:username],
       dropbox_session: dbsession.serialize,
       referral_link: account_info["referral_link"],
-      name: account_info["name"],
+      display_name: account_info["display_name"],
       uid: account_info["uid"],
       country: account_info["country"],
-      freespace: account_info["referral_link"],
+      quota: quota["quota"],
+      normal: quota["normal"],
+      shared: quota["shared"],
       created_at: Time.now
     )
     p @user
