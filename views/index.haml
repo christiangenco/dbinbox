@@ -1,9 +1,13 @@
+-@error = 
+
 %h1 
   Dropbox Dropbox
   %small a Dropbox for your Dropbox
 
 %form.form-inline{action: "/", method: "post"}
-  .input-prepend
-    %span.add-on dropboxdropbox.com/
-    %input.span4#username(placeholder="username" name="username")
-  %button.btn.btn-primary(type='submit' title="links with your Dropbox") Register
+  %fieldset.control-group{class: @error.nil? || @error.empty? ? "" : "error"}
+    .input-prepend
+      %span.add-on dropboxdropbox.com/
+      %input.span4#username(placeholder="username" name="username" value="#{params['username']}")
+    %button.btn.btn-primary(type='submit' title="links with your Dropbox") Register
+    %span.help-inline=@error

@@ -12,7 +12,7 @@ require 'dm-validations'
 DataMapper.setup( :default, "sqlite3://#{Dir.pwd}/users.db" )
 class User
   include DataMapper::Resource
-  property :username, String, :key => true, :required => true, :unique => true, :format => /\w+/
+  property :username, String, :key => true, :required => true, :unique => true, :format => /^\w+$/
   property :dropbox_session, Text
   property :referral_link, String
   property :display_name, String
@@ -92,9 +92,11 @@ end
 post '/' do
   username = params['username']
 
-  if User.get(username) || !username =~ /\w+/
+  if User.get(username) || !username =~ /^\w+$/
     # username already exists/is of the wrong format
-    # redirect to / with errors
+    @error = "Sorry! \"#{username}\" is already taken."
+    @error = "Username must contain only letters." if !username =~ /\w+/
+    return haml(:index)
   else
     dbsession = DropboxSession.new(dbkey, dbsecret)
     session[:dropbox_session] = dbsession.serialize #serialize and save this DropboxSession
@@ -103,8 +105,6 @@ post '/' do
     # send them out to authenticate us
     redirect dbsession.get_authorize_url("http://127.0.0.1:9393/")
   end
-
-  "something went wrong"
 end
 
 get "/js/app.js" do
