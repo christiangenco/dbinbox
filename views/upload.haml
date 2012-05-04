@@ -1,9 +1,9 @@
 %h1.span12
   %img(class="modal-h-img sprite s_upload_32 modal-h-img" src="img/icon_spacer.gif")
-  Send files to 
-  =@info['email']
+  Send files to #{@username}
 
 %p.span8.instructions You can select more than one file at a time. You can also drag and drop files anywhere on this page to start uploading.
+
 
 %form{action: 'upload', multipart: true, id: 'upload'}
   %table.filelist.span12
@@ -31,8 +31,11 @@
     %i.icon-plus.icon-white
     %span Choose files
     %input(type="file" name="files[]" multiple)
-  .span5.fileupload-progress.fade
+  .span10.fileupload-progress.fade
     .progress.progress-success.progress-striped.active
     .bar{:style => "width:0%;"}
     .progress-extended &nbsp;
   .fileupload-loading
+
+#dropzone.fade.well 
+  %span Drop your file to upload

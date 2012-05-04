@@ -1,3 +1,5 @@
 * mysql database to keep track of tokens
   * redirect dropboxdropbox.com/username to use that token
+* fix upload meter
+* add tooltip to "Register" button on /
 * add dropbox download link (may remove later)

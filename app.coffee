@@ -21,7 +21,7 @@ $ ->
           '<span class="name"></span> - ' +
           '<span class="size"></span>' +
           '</td>' +
-          '<td class="info-col span4"></td>' +
+          '<td class="info-col span4">uploading to Dropbox...</td>' +
           '<td class="status-col span1">' +
           '<img class="" src="img/ajax-loading-small.gif" />' +
           '</td>' +
