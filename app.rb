@@ -4,8 +4,9 @@ require 'json'
 require 'haml'
 require 'coffee-script'
 enable :sessions
-@@url = "http://127.0.0.1:9393/"
+# @@url = "http://127.0.0.1:9393/"
 # @@url = "http://localhost:4567/"
+@@url = "http://192.168.1.103:4567"
 
 # database
 require 'dm-core'
@@ -80,7 +81,8 @@ get '/' do
     )
 
     if @user.saved?
-      haml :registered
+      session[:registered] = true
+      haml :index
     else
       @error = "Sorry, your information couldn't be saved: #{@user.errors.map{|e| e.to_s}}. Please try again or report the issue to @cgenco."
       haml :index

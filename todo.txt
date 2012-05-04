@@ -1,4 +1,5 @@
 * fix app hanging on unknown username
+* add password-protection
+* if a user's authentication token is invalid, remove the user?
 * fix upload meter
 * add tooltip to "Register" button on /
-* add dropbox download link (may remove later)
