@@ -64,7 +64,7 @@ get '/' do
     puts "account_info = #{account_info}"
     quota = account_info["quota_info"]
     
-    @user = User.new(
+    @user = User.create(
       username: session[:username],
       dropbox_session: dbsession.serialize,
       referral_link: account_info["referral_link"],
@@ -76,9 +76,10 @@ get '/' do
       shared: quota["shared"],
       created_at: Time.now
     )
-    p @user
 
-    if @user.save
+    if @user.saved?
+      puts "USER HAS BEEN SAVED: #{@user.to_s}"
+      puts "User.all.size = #{User.all.size}"
       haml :registered
     else
       # show @user.errors
@@ -152,6 +153,7 @@ end
 
 get "/:username" do
   @user = User.get(params[:username])
-  return "User not found<br />#{User.all.map(&:to_s)}" unless @user
+  puts "@user = #{@user}"
+  return "User not found<br />#{User.all.map(&:to_s)}<br />User.size = #{User.all.size}" unless @user
   haml :upload
 end
