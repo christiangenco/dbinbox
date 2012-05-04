@@ -1,11 +1,11 @@
 %h1.span12
   %img(class="modal-h-img sprite s_upload_32 modal-h-img" src="img/icon_spacer.gif")
-  Send files to #{@username}
+  Send files to #{@user.display_name}
 
 %p.span8.instructions You can select more than one file at a time. You can also drag and drop files anywhere on this page to start uploading.
 
 
-%form{action: 'upload', multipart: true, id: 'upload'}
+%form{action: params["username"], multipart: true, id: 'upload'}
   %table.filelist.span12
     %tbody.files 
     -#

@@ -107,30 +107,28 @@ post '/' do
   "something went wrong"
 end
 
-def get_session
-  # Check if user has no dropbox session...re-direct them to authorize
-  redirect '/' unless session[:dropbox_session]
-  @dbsession = DropboxSession.deserialize(session[:dropbox_session])
-  @client = DropboxClient.new(@dbsession, :app_folder) #raise an exception if session not authorized
-  @info = @client.account_info # look up account information
-end
-
 get "/js/app.js" do
   content_type "text/javascript"
   coffee File.open("./app.coffee").read
 end
 
-get '/upload' do
-  puts "GETTING /upload"
-  get_session
-  # show a file upload page
-  haml :upload
+def get_user
+  user = User.get(params[:username])
+  if !user
+    @error = "User '#{params[:username]}' not found"
+    redirect "/error"
+  end
+  user
 end
 
-post '/upload' do
+post '/:username' do
   puts "POSTING TO /upload"
   p params
-  get_session
+  
+  @user = get_user
+  redirect '/' unless @user.dropbox_session
+  @dbsession = DropboxSession.deserialize(@user.dropbox_session)
+  @client = DropboxClient.new(@dbsession, :app_folder) #raise an exception if session not authorized
 
   # upload the posted file to dropbox keeping the same name
   resp = params[:files].map do |file|
@@ -152,8 +150,6 @@ end
 
 
 get "/:username" do
-  @user = User.get(params[:username])
-  puts "@user = #{@user}"
-  return "User not found<br />#{User.all.map(&:to_s)}<br />User.size = #{User.all.size}" unless @user
+  @user = get_user
   haml :upload
 end
