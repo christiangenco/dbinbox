@@ -25,7 +25,7 @@ class User
   property :created_at, DateTime
 end
 # Automatically create the tables if they don't exist
-DataMapper.auto_migrate!
+DataMapper.auto_upgrade!
 
 # dropbox api
 dbkey, dbsecret = 'ribh7ft60gym2l8', 'sj8rz89ril4wl76'
