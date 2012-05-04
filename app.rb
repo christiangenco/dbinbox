@@ -1,38 +1,107 @@
 require 'sinatra'
 require 'dropbox_sdk'
 require 'json'
+require 'haml'
 require 'coffee-script'
+enable :sessions
 
 # database
 require 'dm-core'
 require 'dm-migrations'
+require 'dm-validations'
 DataMapper.setup( :default, "sqlite3://#{Dir.pwd}/dropbox_tokens.db" )
+class User
+  include DataMapper::Resource
+  property :username, String, :key => true, :required => true, :unique => true, :format => /\w+/
+  property :dropbox_session, String
+  property :referral_link, String
+  property :name, String
+  property :uid, String
+  property :country, String
+  property :freespace, Integer #quota_info["quota"] - quota_info["normal"]
+  property :created_at, DateTime
+end
+# Automatically create the tables if they don't exist
+DataMapper.auto_migrate!
 
-enable :sessions
+# dropbox api
+dbkey, dbsecret = 'ribh7ft60gym2l8', 'sj8rz89ril4wl76'
+
+# ----------------------------------------------
+
+# user visits homepage
+# user enters desired username
+# app checks that username isn't already registered
+  # if yes -> redirect to home page with error message
+# app stores dbsession and desired username in session
+# dropbox authenticates
+# app creates user from session's username, dbtoken, and info from /account/info
+  # doublechecks that username isn't taken
+# app shows user registered page with link to their dropbox dropbox
+
+# person visits link
+# app looks up access token based on username
+#   if doesn't exist, show "user does not exist"
+# if exists, look up access token and use that
 
 get '/' do
-  return haml :index
-
-  if not params[:oauth_token]
-    dbsession = DropboxSession.new('ribh7ft60gym2l8', 'sj8rz89ril4wl76') # key, secret
-    session[:dropbox_session] = dbsession.serialize #serialize and save this DropboxSession
-    #pass to get_authorize_url a callback url that will return the user here
-    # redirect dbsession.get_authorize_url url_for(:action => 'authorize')
-    redirect dbsession.get_authorize_url("http://127.0.0.1:9393")
+  if !params[:oauth_token]
+    # first-time user!
+    haml :index
   else
     # the user has returned from Dropbox
+    # we've been authorized, so now request an access_token
     dbsession = DropboxSession.deserialize(session[:dropbox_session])
-    dbsession.get_access_token  #we've been authorized, so now request an access_token
-    session[:dropbox_session] = dbsession.serialize
+    dbsession.get_access_token
 
-    redirect '/upload'
+    dbclient = DropboxClient.new(dbsession)
+
+    # get info from dropbox
+    account_info = dbclient.account_info
+    puts "account_info = #{account_info}"
+    quota = account_info["quota_info"]
+    freespace = quota["quota"].to_i - quota["normal"].to_i - quota["shared"].to_i
+    
+    @user = User.new(
+      username: session[:username],
+      dropbox_session: dbsession.serialize,
+      referral_link: account_info["referral_link"],
+      name: account_info["name"],
+      uid: account_info["uid"],
+      country: account_info["country"],
+      freespace: account_info["referral_link"],
+      created_at: Time.now
+    )
+    p @user
+
+    if @user.save
+      haml :registered
+    else
+      # show @user.errors
+      "there were errors saving: #{@user.errors.map{|e| e.to_s}}"
+    end
   end
 end
 
+# request a username
 post '/' do
-  puts "POSTING"
-  p params
-  p params["username"]
+  puts "posting to /"
+  username = params['username']
+  puts "username = #{username}"
+  p User.get(username)
+  p !username =~ /\w+/
+  if User.get(username) || !username =~ /\w+/
+    # username already exists/is of the wrong format
+    # redirect to / with errors
+  else
+    dbsession = DropboxSession.new(dbkey, dbsecret)
+    session[:dropbox_session] = dbsession.serialize #serialize and save this DropboxSession
+    session[:username] = username
+
+    # send them out to authenticate us
+    redirect dbsession.get_authorize_url("http://127.0.0.1:9393/")
+  end
+  "something went wrong"
 end
 
 def get_session
@@ -93,5 +162,3 @@ get "/:username" do
   @username = params[:username]
   haml :upload
 end
-
-__END__
