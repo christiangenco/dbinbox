@@ -4,9 +4,15 @@ body{
   padding-top: 60px;
 }
 
+h1, p.instructions, table{
+  margin-bottom: 20px;
+}
+
 h1{
   font-size: 20px;
   font-weight: 600;
+  font-family: 'Open Sans', 'lucida grande', 'Segoe UI', arial, verdana, 'lucida sans unicode', tahoma, sans-serif;
+  vertical-align: middle;
 }
 
 .filelist {

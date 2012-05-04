@@ -2,39 +2,39 @@
   %img(class="modal-h-img sprite s_upload_32 modal-h-img" src="img/icon_spacer.gif")
   Send files to 
   =@info['email']
-%br
-%br
-%form{action: 'upload', multipart: true, id: 'upload'}
-  .row.fileupload-buttonbar.span7
-    %span.btn.btn-success.fileinput-button
+
+%p.span8.instructions You can select more than one file at a time. You can also drag and drop files anywhere on this page to start uploading.
+
+%table.filelist.span12
+  %tbody
+    %tr
+      %td.filename-col.span7
+        %img(class="sprite s_page_white_get" src="img/icon_spacer.gif")
+        %span.filename IMG_2121.PNG
+        %span.size - 203.87 KB
+      %td.info-col.span4
+        uploading to Dropbox...
+      %td.status-col.span1
+        %img(src="img/ajax-loading-small.gif" class="")
+%table.filelist.span12
+  %tbody
+    %tr
+      %td.filename-col.span7
+        %img(class="sprite s_page_white_picture" src="img/icon_spacer.gif")
+        %span.filename IMG_2121.PNG
+        %span.size - 203.87 KB
+      %td.info-col.span4
+        error
+      %td.status-col.span1
+        %img(src="img/icon_spacer.gif" class="sprite s_synced ")
+%form.span12{action: 'upload', multipart: true, id: 'upload'}
+  .row.fileupload-buttonbar
+    %span.btn.btn-success.fileinput-button{style: "float: right"}
       %i.icon-plus.icon-white
       %span Add files
       %input(type="file" name="files[]" multiple)
-    or drag and drop files onto this page
     .span5.fileupload-progress.fade
       .progress.progress-success.progress-striped.active
       .bar{:style => "width:0%;"}
       .progress-extended &nbsp;
     .fileupload-loading
-  %table.filelist.span12
-    %tbody
-      %tr
-        %td.filename-col.span7
-          %img(class="sprite s_page_white_get" src="img/icon_spacer.gif")
-          %span.filename IMG_2121.PNG
-          %span.size - 203.87 KB
-        %td.info-col.span4
-          uploading to Dropbox...
-        %td.status-col.span1
-          %img(src="img/ajax-loading-small.gif" class="")
-  %table.filelist.span12
-    %tbody
-      %tr
-        %td.filename-col.span7
-          %img(class="sprite s_page_white_picture" src="img/icon_spacer.gif")
-          %span.filename IMG_2121.PNG
-          %span.size - 203.87 KB
-        %td.info-col.span4
-          error
-        %td.status-col.span1
-          %img(src="img/icon_spacer.gif" class="sprite s_synced ")
