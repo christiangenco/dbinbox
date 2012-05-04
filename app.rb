@@ -89,11 +89,8 @@ end
 
 # request a username
 post '/' do
-  puts "posting to /"
   username = params['username']
-  puts "username = #{username}"
-  p User.get(username)
-  p !username =~ /\w+/
+
   if User.get(username) || !username =~ /\w+/
     # username already exists/is of the wrong format
     # redirect to / with errors
@@ -105,6 +102,7 @@ post '/' do
     # send them out to authenticate us
     redirect dbsession.get_authorize_url("http://127.0.0.1:9393/")
   end
+
   "something went wrong"
 end
 
@@ -116,6 +114,11 @@ def get_session
   @info = @client.account_info # look up account information
 end
 
+get "/js/app.js" do
+  content_type "text/javascript"
+  coffee File.open("./app.coffee").read
+end
+
 get '/upload' do
   puts "GETTING /upload"
   get_session
@@ -123,46 +126,32 @@ get '/upload' do
   haml :upload
 end
 
-  post '/upload' do
-    puts "POSTING TO /upload"
-    p params
-    get_session
+post '/upload' do
+  puts "POSTING TO /upload"
+  p params
+  get_session
 
-    # upload the posted file to dropbox keeping the same name
-    resp = params[:files].map do |file|
-      @client.put_file(file[:filename], file[:tempfile].read)
-    end
-
-    resp.map{|f|
-      f[:name] = f["path"].gsub(/^\//,'')
-      f[:size] = f["bytes"]
-      f[:url] = "hi"
-      f[:thumbnail_url] = "hi"
-      f[:delete_url] = ""
-      f[:delete_type] = "DELETE"
-    }
-    p resp
-    content_type :json
-    resp.to_json
+  # upload the posted file to dropbox keeping the same name
+  resp = params[:files].map do |file|
+    @client.put_file(file[:filename], file[:tempfile].read)
   end
 
-# dropbox_session.mode = :dropbox
- # redirect '/' unless dropbox_session.authorized?
- # dropbox_session.upload 'testfile.txt', 'Folder'
- # uploaded_file = dropbox_session.file 'Folder/testfile.txt'
- # 'This is the metadata: ' + uploaded_file.metadata.size
-
-get "/logout" do
-  session = {}
-  redirect "/"
+  resp.map{|f|
+    f[:name] = f["path"].gsub(/^\//,'')
+    f[:size] = f["bytes"]
+    f[:url] = "hi"
+    f[:thumbnail_url] = "hi"
+    f[:delete_url] = ""
+    f[:delete_type] = "DELETE"
+  }
+  p resp
+  content_type :json
+  resp.to_json
 end
 
-get "/js/app.js" do
-  content_type "text/javascript"
-  coffee File.open("./app.coffee").read
-end
 
 get "/:username" do
-  @username = params[:username]
+  @user = User.get(params[:username])
+  return "User not found<br />#{User.all.map(&:to_s)}" unless @user
   haml :upload
 end
