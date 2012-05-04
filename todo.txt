@@ -1,0 +1,6 @@
+* add genetic icon when uploading
+  * add dropbox-specific icon after uploaded?
+* add dropbox download link (may remove later)
+* mysql database to keep track of tokens
+  * redirect dropboxdropbox.com/username to use that token
+* add dropzone animation
