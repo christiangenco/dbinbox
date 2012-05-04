@@ -4,6 +4,8 @@ require 'json'
 require 'haml'
 require 'coffee-script'
 enable :sessions
+@@url = "http://127.0.0.1:9393/"
+# @@url = "http://localhost:4567/"
 
 # database
 require 'dm-core'
@@ -78,12 +80,10 @@ get '/' do
     )
 
     if @user.saved?
-      puts "USER HAS BEEN SAVED: #{@user.to_s}"
-      puts "User.all.size = #{User.all.size}"
       haml :registered
     else
-      # show @user.errors
-      "there were errors saving: #{@user.errors.map{|e| e.to_s}}"
+      @error = "Sorry, your information couldn't be saved: #{@user.errors.map{|e| e.to_s}}. Please try again or report the issue to @cgenco."
+      haml :index
     end
   end
 end
@@ -96,6 +96,7 @@ post '/' do
     # username already exists/is of the wrong format
     @error = "Sorry! \"#{username}\" is already taken."
     @error = "Your username must only contain letters." if !(username =~ /^\w+$/)
+    @error = "Your username can't be blank! I need to use that one! D:" if username.empty?
     return haml(:index)
   else
     dbsession = DropboxSession.new(dbkey, dbsecret)
@@ -103,7 +104,7 @@ post '/' do
     session[:username] = username
 
     # send them out to authenticate us
-    redirect dbsession.get_authorize_url("http://127.0.0.1:9393/")
+    redirect dbsession.get_authorize_url(@@url)
   end
 end
 
@@ -113,11 +114,13 @@ get "/js/app.js" do
 end
 
 def get_user
+  puts "getting user"
   user = User.get(params[:username])
   if !user
     @error = "User '#{params[:username]}' not found"
-    redirect "/error"
+    haml :index
   end
+  puts "got user"
   user
 end
 
@@ -140,8 +143,8 @@ post '/:username' do
   resp.map{|f|
     f[:name] = f["path"].gsub(/^\//,'')
     f[:size] = f["bytes"]
-    f[:url] = "hi"
-    f[:thumbnail_url] = "hi"
+    f[:url] = ""
+    f[:thumbnail_url] = ""
     f[:delete_url] = ""
     f[:delete_type] = "DELETE"
   }
