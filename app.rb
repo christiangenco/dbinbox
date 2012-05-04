@@ -95,7 +95,7 @@ post '/' do
   if User.get(username) || !(username =~ /^\w+$/)
     # username already exists/is of the wrong format
     @error = "Sorry! \"#{username}\" is already taken."
-    @error = "Your username must only contain letters." if username =~ /^\w+$/
+    @error = "Your username must only contain letters." if !(username =~ /^\w+$/)
     return haml(:index)
   else
     dbsession = DropboxSession.new(dbkey, dbsecret)
