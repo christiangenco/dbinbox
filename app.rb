@@ -2,10 +2,18 @@ require 'sinatra'
 require 'dropbox_sdk'
 require 'json'
 require 'coffee-script'
+
+# database
+require 'dm-core'
+require 'dm-migrations'
+DataMapper.setup( :default, "sqlite3://#{Dir.pwd}/dropbox_tokens.db" )
+
 enable :sessions
 
 get '/' do
-  if not params[:oauth_token] then
+  return haml :index
+
+  if not params[:oauth_token]
     dbsession = DropboxSession.new('ribh7ft60gym2l8', 'sj8rz89ril4wl76') # key, secret
     session[:dropbox_session] = dbsession.serialize #serialize and save this DropboxSession
     #pass to get_authorize_url a callback url that will return the user here
@@ -21,6 +29,12 @@ get '/' do
   end
 end
 
+post '/' do
+  puts "POSTING"
+  p params
+  p params["username"]
+end
+
 def get_session
   # Check if user has no dropbox session...re-direct them to authorize
   redirect '/' unless session[:dropbox_session]
@@ -34,7 +48,7 @@ get '/upload' do
   get_session
   # show a file upload page
   haml :upload
-  end
+end
 
   post '/upload' do
     puts "POSTING TO /upload"
@@ -73,6 +87,11 @@ end
 get "/js/app.js" do
   content_type "text/javascript"
   coffee File.open("./app.coffee").read
+end
+
+get "/:username" do
+  @username = params[:username]
+  haml :upload
 end
 
 __END__

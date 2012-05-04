@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 %html
   %head
     %title Dropbox Dropbox
@@ -8,8 +9,6 @@
     %link(rel="stylesheet" href="css/jquery.fileupload-ui.css")
     %link(rel="stylesheet" href="css/style.css")
   %body
-    #dropzone.fade.well 
-      %span Drop your file to upload
     .container
       =yield
     %script(src="js/jquery.min.js")
@@ -20,4 +19,5 @@
     %script(src="js/jquery.fileupload-ui.js")
     / The Templates plugin is included to render the upload/download listings
     %script(src="http://blueimp.github.com/JavaScript-Templates/tmpl.min.js")
+    / %script(src="js/bootstrap-tooltip.js")
     %script(src="js/app.js")

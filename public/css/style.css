@@ -1,7 +1,9 @@
 @charset 'UTF-8';
 
-body{
-  /*padding-top: 60px;*/
+/*index*/
+
+.input-prepend .add-on {
+  margin-right: -5px; /*bootstrap bug?*/
 }
 
 h1, p.instructions, table{
