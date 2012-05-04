@@ -13,7 +13,7 @@ DataMapper.setup( :default, "sqlite3://#{Dir.pwd}/dropbox_tokens.db" )
 class User
   include DataMapper::Resource
   property :username, String, :key => true, :required => true, :unique => true, :format => /\w+/
-  property :dropbox_session, String
+  property :dropbox_session, Text
   property :referral_link, String
   property :name, String
   property :uid, String
