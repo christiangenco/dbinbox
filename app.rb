@@ -92,10 +92,10 @@ end
 post '/' do
   username = params['username']
 
-  if User.get(username) || !username =~ /^\w+$/
+  if User.get(username) || !(username =~ /^\w+$/)
     # username already exists/is of the wrong format
     @error = "Sorry! \"#{username}\" is already taken."
-    @error = "Username must contain only letters." if !username =~ /\w+/
+    @error = "Your username must only contain letters." if username =~ /^\w+$/
     return haml(:index)
   else
     dbsession = DropboxSession.new(dbkey, dbsecret)
@@ -121,10 +121,12 @@ def get_user
   user
 end
 
-post '/:username' do
-  puts "POSTING TO /upload"
-  p params
-  
+get "/:username" do
+  @user = get_user
+  haml :upload
+end
+
+post '/:username' do  
   @user = get_user
   redirect '/' unless @user.dropbox_session
   @dbsession = DropboxSession.deserialize(@user.dropbox_session)
@@ -143,13 +145,6 @@ post '/:username' do
     f[:delete_url] = ""
     f[:delete_type] = "DELETE"
   }
-  p resp
   content_type :json
   resp.to_json
-end
-
-
-get "/:username" do
-  @user = get_user
-  haml :upload
 end
