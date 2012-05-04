@@ -48,7 +48,7 @@ get '/upload' do
 
     resp.map{|f|
       f[:name] = f["path"].gsub(/^\//,'')
-      f[:size] = 1
+      f[:size] = f["bytes"]
       f[:url] = "hi"
       f[:thumbnail_url] = "hi"
       f[:delete_url] = ""
@@ -71,6 +71,7 @@ get "/logout" do
 end
 
 get "/js/app.js" do
+  return ""
   content_type "text/javascript"
   coffee File.open("./app.coffee").read
 end

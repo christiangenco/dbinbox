@@ -5,8 +5,10 @@ $ ->
     uploadTemplateId: null,
     downloadTemplateId: null,
     uploadTemplate: (o) ->
+      console.log("uploadTemplate")
       rows = $()
       $.each o.files, (index, file) ->
+        console.log(file)
         console.log("filename = " + file.name)
         console.log("size = " + o.formatFileSize(file.size))
         row = $(
@@ -20,16 +22,15 @@ $ ->
         row.find('.name').text(file.name)
         row.find('.size').text(o.formatFileSize(file.size))
         row.find('.error').text(locale.fileupload.errors[file.error] || file.error) if file.error
-        console.log "done"
         rows = rows.add(row)
-      console.log rows
-      rows
+      return rows
     downloadTemplate: (o) ->
-      console.log("downloadtemplateId()")
+      console.log("downloadtemplate")
+      console.log(o)
       rows = $()
       $.each o.files, (index, file) ->
         console.log("filename = " + file.name)
-        console.log("size = " + o.formatFileSize(file.size))
+        console.log("size = " + file.bytes)
         row = $(
           "<tr class=\"template-upload fade\">" +
           "<td class=\"preview\"><span class=\"fade\"></span></td>" +
@@ -41,10 +42,8 @@ $ ->
         row.find('.name').text(file.name)
         row.find('.size').text(o.formatFileSize(file.size))
         row.find('.error').text(locale.fileupload.errors[file.error] || file.error) if file.error
-        console.log "done"
         rows = rows.add(row)
-      console.log rows
-      rows
+      return rows
     # done: (e,data) ->
     #   console.log e
     #   console.log data
