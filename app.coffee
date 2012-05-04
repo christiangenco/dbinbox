@@ -2,6 +2,9 @@ $ ->
   $('#upload').fileupload({
     dataType: 'json',
     autoUpload: true,
+    acceptFileTypes: /./,
+    dragover: ->
+      console.log("DRAAAAAG")
     uploadTemplateId: null,
     downloadTemplateId: null,
     uploadTemplate: (o) ->
@@ -66,3 +69,20 @@ $ ->
     #     console.log file.pat`h
     #     $('<p/>').text(file.path).appendTo(document.body)
   })
+  
+  # dropzone effect
+  $(document).bind 'dragover', (e) ->
+    dropZone = $('#dropzone')
+    timeout = window.dropZoneTimeout
+    if !timeout
+      dropZone.addClass('in') 
+    else
+      clearTimeout(timeout)
+    if (e.target == dropZone[0])
+      dropZone.addClass('hover');
+    else
+      dropZone.removeClass('hover');
+    window.dropZoneTimeout = setTimeout (->
+      window.dropZoneTimeout = null;
+      dropZone.removeClass('in hover');
+      ), 100

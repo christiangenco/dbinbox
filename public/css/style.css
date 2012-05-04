@@ -1,7 +1,7 @@
 @charset 'UTF-8';
 
 body{
-  padding-top: 60px;
+  /*padding-top: 60px;*/
 }
 
 h1, p.instructions, table{
@@ -9,6 +9,7 @@ h1, p.instructions, table{
 }
 
 h1{
+  margin-top: 60px;
   font-size: 20px;
   font-weight: 600;
   font-family: 'Open Sans', 'lucida grande', 'Segoe UI', arial, verdana, 'lucida sans unicode', tahoma, sans-serif;
@@ -27,6 +28,50 @@ h1{
 
 .size {
   color: #888;
+}
+
+/* dropzone */
+
+#dropzone {
+    display: none;
+    background: lawngreen;
+    width: 50%;
+    position: absolute;
+    top: 25%;
+    left: 25%;
+    text-align: center;
+    font-weight: bold;
+    font-size: 30px;
+    line-height: 40px;
+    z-index: 50;
+    margin: 0;
+    padding: 0;
+    opacity:.8;filter:alpha(opacity=80);-moz-opacity:.8;
+    vertical-align: middle;
+}
+
+#dropzone span{
+  vertical-align: middle;
+  margin: 30px 10px 30px 10px;
+  display: block;
+}
+
+#dropzone.in {
+    /*width: 600px;*/
+    /*height: 200px;*/
+    /*line-height: 200px;*/
+    /*font-size: larger;*/
+    display: block;
+}
+#dropzone.hover {
+}
+#dropzone.fade {
+    /*-webkit-transition: all 0.3s ease-out;
+    -moz-transition: all 0.3s ease-out;
+    -ms-transition: all 0.3s ease-out;
+    -o-transition: all 0.3s ease-out;
+    transition: all 0.3s ease-out;*/
+    /*opacity: 1;*/
 }
 
 /* shamelessly adapted from https://www.dropbox.com/static/26477/css/main.css*/
