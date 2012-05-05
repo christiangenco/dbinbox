@@ -11,7 +11,8 @@ require 'dm-validations'
 enable :sessions
 # @@url = "http://127.0.0.1:9393/"
 # @@url = "http://localhost:4567/"
-@@url = "http://192.168.1.103:4567/"
+# @@url = "http://192.168.1.103:4567/"
+@@url = "http://dropboxdropbox.com/"
 
 DataMapper.setup( :default, "sqlite3://#{Dir.pwd}/users.db" )
 
