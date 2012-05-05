@@ -12,7 +12,8 @@ enable :sessions
 # @@url = "http://127.0.0.1:9393/"
 # @@url = "http://localhost:4567/"
 # @@url = "http://192.168.1.103:4567/"
-@@url = "http://dropboxdropbox.com/"
+# @@url = "http://dropboxdropbox.com/"
+@@url = "http://dbinbox.com/"
 
 DataMapper.setup( :default, "sqlite3://#{Dir.pwd}/users.db" )
 
@@ -46,7 +47,7 @@ dbkey, dbsecret = 'ribh7ft60gym2l8', 'sj8rz89ril4wl76'
 # dropbox authenticates
 # app creates user from session's username, dbtoken, and info from /account/info
   # doublechecks that username isn't taken
-# app shows user registered page with link to their dropbox dropbox
+# app shows user registered page with link to their dbinbox
 
 # person visits link
 # app looks up access token based on username

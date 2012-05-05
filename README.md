@@ -1,9 +1,9 @@
-DropboxDropbox
-==============
+dbinbox
+======
 
-a dropbox for your dropbox
+an inbox for your dropbox
 
-By visiting your personal Dropbox Dropbox url, non-Dropbox users will be able to upload files straight into a special Dropbox folder in your Dropbox.
+By visiting your personal dbinbox url, non-Dropbox users will be able to upload files straight into a special inbox folder in your Dropbox.
 
 This is also quite handy if you need to send yourself a file from someone else's computer but don't want to log into email or remember a tinyurl.
 

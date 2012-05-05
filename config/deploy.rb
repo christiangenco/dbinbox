@@ -20,8 +20,8 @@ end
 set :normalize_asset_timestamps, false
 
 
-set :application, "dropboxdropbox" # Application name.
-set :location, "dropboxdropbox.com" # Web server url.
+set :application, "dbinbox" # Application name.
+set :location, "dbinbox.com" # Web server url.
 set :user, "cgenco" # Remote user name. Must be able to log in via SSH.
 # set :port, 2897 # SSH port. Only required if non default ssh port used.
 set :use_sudo, false # Remove or set the true if all commands should be run through sudo.

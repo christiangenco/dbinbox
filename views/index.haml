@@ -1,12 +1,12 @@
 %h1 
-  Dropbox Dropbox
-  %small a Dropbox for your Dropbox
+  dbinbox
+  %small an inbox for your Dropbox
 
 -if !session[:registered] # if the user isn't registered
   %form.form-inline{action: "/", method: "post"}
     %fieldset.control-group{class: @error.nil? || @error.empty? ? "" : "error"}
       .input-prepend
-        %span.add-on dropboxdropbox.com/
+        %span.add-on dbinbox.com/
         %input.span4#username(placeholder="username" name="username" value="#{params['username']}")
       %button.btn.btn-primary(type='submit' title="links with your Dropbox") Register
       %span.help-inline=@error
@@ -21,12 +21,12 @@
     %p
       By visiting 
       -if url
-        %a{href: url}your personal Dropbox Dropbox url,
+        %a{href: url}your personal dbinbox url,
       -else
-        your personal Dropbox Dropbox url,
-      non-Dropbox users will be able to upload files straight into a special Dropbox folder in your Dropbox.
+        your personal dbinbox,
+      non-Dropbox users will be able to upload files straight into a special 'inbox' folder in your Dropbox.
     %p This is also quite handy if you need to send yourself a file from someone else's computer but don't want to log into email or remember a tinyurl.
-    %p Public Dropbox Dropboxes can be optionally passphrase protected [Coming Soon].
+    %p Public dbinboxes can be optionally passphrase protected [Coming Soon].
 
-%a(href="https://github.com/christiangenco/DropboxDropbox")
+%a(href="https://github.com/christiangenco/dbinbox")
   %img(style="position: absolute; top: 0; right: 0; border: 0;" src="https://a248.e.akamai.net/camo.github.com/7afbc8b248c68eb468279e8c17986ad46549fb71/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub")
