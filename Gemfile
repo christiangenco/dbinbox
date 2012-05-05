@@ -1,6 +1,3 @@
-source :rubygems
-source "http://gems.github.com"
-
 gem 'sinatra'
 gem 'dropbox-sdk'
 gem 'json'
@@ -10,5 +7,6 @@ gem 'coffee-script'
 gem 'dm-core'
 gem 'dm-migrations'
 gem 'dm-validations'
+gem 'dm-sqlite-adapter'
 
 gem 'thin'

@@ -1,5 +1,5 @@
 # from http://gembundler.com/deploying.html
-require "bundler/capistrano"
+# require "bundler/capistrano"
 
 # random RVM bug fixes
 set :default_environment, {
