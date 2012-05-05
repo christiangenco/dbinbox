@@ -2,17 +2,29 @@
   Dropbox Dropbox
   %small a Dropbox for your Dropbox
 
-%form.form-inline{action: "/", method: "post"}
-  %fieldset.control-group{class: @error.nil? || @error.empty? ? "" : "error"}
-    .input-prepend
-      %span.add-on dropboxdropbox.com/
-      %input.span4#username(placeholder="username" name="username" value="#{params['username']}")
-    %button.btn.btn-primary(type='submit' title="links with your Dropbox") Register
-    %span.help-inline=@error
+-if session[:registered] # user successfully registered
+  %form.form-inline{action: "/", method: "post"}
+    %fieldset.control-group{class: @error.nil? || @error.empty? ? "" : "error"}
+      .input-prepend
+        %span.add-on dropboxdropbox.com/
+        %input.span4#username(placeholder="username" name="username" value="#{params['username']}")
+      %button.btn.btn-primary(type='submit' title="links with your Dropbox") Register
+      %span.help-inline=@error
+-else
+  %p{style: "color: green"} You're registered!
+  %p
+    -url = @@url + session[:username]
+    %a{href: url}=url
 
 .row
   .span8
-    %p By visiting your personal Dropbox Dropbox url, non-Dropbox users will be able to upload files straight into a special Dropbox folder in your Dropbox.
+    %p
+      By visiting 
+      -if url
+        %a{href: url}your personal Dropbox Dropbox url,
+      -else
+        your personal Dropbox Dropbox url,
+      non-Dropbox users will be able to upload files straight into a special Dropbox folder in your Dropbox.
     %p This is also quite handy if you need to send yourself a file from someone else's computer but don't want to log into email or remember a tinyurl.
     %p Public Dropbox Dropboxes can be optionally passphrase protected [Coming Soon].
 
