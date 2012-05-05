@@ -13,7 +13,7 @@
 -else
   %p{style: "color: green"} You're registered!
   %p
-    -url = @@url + session[:username]
+    -url = @@url + session[:username] if @@url && session[:username]
     %a{href: url}=url
 
 .row
