@@ -118,6 +118,11 @@ get "/js/app.js" do
   coffee File.open("./app.coffee").read
 end
 
+get "/logout" do
+  session = nil
+  redirect "/"
+end
+
 def get_user
   puts "getting user"
   user = User.get(params[:username])

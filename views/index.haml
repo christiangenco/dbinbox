@@ -2,7 +2,7 @@
   Dropbox Dropbox
   %small a Dropbox for your Dropbox
 
--if session[:registered] # user successfully registered
+-if !session[:registered] # if the user isn't registered
   %form.form-inline{action: "/", method: "post"}
     %fieldset.control-group{class: @error.nil? || @error.empty? ? "" : "error"}
       .input-prepend
