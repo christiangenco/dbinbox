@@ -13,5 +13,5 @@ _ReSharper.*
 # Database files
 *.db
 
-# Domain-speficic configurations
-config/deploy.rb
+# from http://gembundler.com/deploying.html
+.bundle
