@@ -130,6 +130,7 @@ def get_user
 end
 
 get "/:username" do
+  puts "get /username"
   @user = get_user
   if !@user
     @error = "User '#{params[:username]}' not found"
@@ -139,6 +140,7 @@ get "/:username" do
 end
 
 post '/:username' do
+  puts "post /username"
   @user = get_user
   return unless @user
 
