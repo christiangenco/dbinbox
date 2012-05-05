@@ -9,11 +9,7 @@ require 'dm-migrations'
 require 'dm-validations'
 
 enable :sessions
-# @@url = "http://127.0.0.1:9393/"
-# @@url = "http://localhost:4567/"
-# @@url = "http://192.168.1.103:4567/"
-# @@url = "http://dropboxdropbox.com/"
-@@url = "http://dbinbox.com/"
+set :url, (settings.environment == :production) ? "http://dbinbox.com/" : "http://127.0.0.1:9393/"
 
 DataMapper.setup( :default, "sqlite3://#{Dir.pwd}/users.db" )
 
@@ -110,7 +106,7 @@ post '/' do
     session[:username] = username
 
     # send them out to authenticate us
-    redirect dbsession.get_authorize_url(@@url)
+    redirect dbsession.get_authorize_url(settings.url)
   end
 end
 
