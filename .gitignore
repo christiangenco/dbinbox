@@ -12,3 +12,6 @@ _ReSharper.*
 
 # Database files
 *.db
+
+# Domain-speficic configurations
+config/deploy.rb

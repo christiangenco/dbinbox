@@ -3,15 +3,16 @@ require 'dropbox_sdk'
 require 'json'
 require 'haml'
 require 'coffee-script'
+# database
+require 'dm-core'
+require 'dm-migrations'
+require 'dm-validations'
+
 enable :sessions
 # @@url = "http://127.0.0.1:9393/"
 # @@url = "http://localhost:4567/"
 @@url = "http://192.168.1.103:4567/"
 
-# database
-require 'dm-core'
-require 'dm-migrations'
-require 'dm-validations'
 DataMapper.setup( :default, "sqlite3://#{Dir.pwd}/users.db" )
 
 class User

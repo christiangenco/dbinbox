@@ -1,0 +1,13 @@
+environment: production
+chdir: /u/apps/dropboxdropbox/current/
+address: 127.0.0.1
+user: cgenco
+group: cgenco
+port: 3200
+pid: /u/apps/dropboxdropbox/shared/pids/thin.pid
+rackup: /u/apps/dropboxdropbox/current/config.ru
+log: /u/apps/dropboxdropbox/current/log/thin.log
+max_conns: 1024
+timeout: 30
+max_persistent_conns: 512
+daemonize: true
