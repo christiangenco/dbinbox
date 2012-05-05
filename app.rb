@@ -127,21 +127,21 @@ end
 def get_user
   puts "getting user"
   user = User.get(params[:username])
-  if !user
-    @error = "User '#{params[:username]}' not found"
-    haml :index
-  end
-  puts "got user"
-  user
 end
 
 get "/:username" do
   @user = get_user
+  if !@user
+    @error = "User '#{params[:username]}' not found"
+    return haml :index
+  end
   haml :upload
 end
 
-post '/:username' do  
+post '/:username' do
   @user = get_user
+  return unless @user
+
   redirect '/' unless @user.dropbox_session
   @dbsession = DropboxSession.deserialize(@user.dropbox_session)
   @client = DropboxClient.new(@dbsession, :app_folder) #raise an exception if session not authorized
