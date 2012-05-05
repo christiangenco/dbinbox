@@ -1,7 +1,7 @@
 dbinbox
 ======
 
-an inbox for your dropbox
+an inbox for your Dropbox
 
 By visiting your personal dbinbox url, non-Dropbox users will be able to upload files straight into a special inbox folder in your Dropbox.
 
