@@ -1,7 +1,8 @@
 source :rubygems
+source "http://gems.github.com"
 
 gem 'sinatra'
-gem 'dropbox_sdk'
+gem 'dropbox-sdk'
 gem 'json'
 gem 'haml'
 gem 'coffee-script'
