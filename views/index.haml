@@ -2,9 +2,6 @@
   dbinbox
   %small an inbox for your Dropbox
 
-url: 
-=settings.url
-
 -if !session[:registered] # if the user isn't registered
   %form.form-inline{action: "/", method: "post"}
     %fieldset.control-group{class: @error.nil? || @error.empty? ? "" : "error"}
