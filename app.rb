@@ -96,20 +96,26 @@ end
 post '/' do
   username = params['username']
 
-  if User.get(username) || !(username =~ /^\w+$/)
-    # username already exists/is of the wrong format
+  # if the user already exists and is currently authenticated
+  # or if the requested username isn't composed of word characters
+  # then return an error
+  user = User.get(username)
+  if !user.nil? && user.authenticated
     @error = "Sorry! \"#{username}\" is already taken."
+  elsif !(username =~ /^\w+$/)
     @error = "Your username must only contain letters." if !(username =~ /^\w+$/)
-    @error = "Your username can't be blank! I need to use that one! D:" if username.empty?
-    return haml(:index)
-  else
-    dbsession = DropboxSession.new(dbkey, dbsecret)
-    session[:dropbox_session] = dbsession.serialize #serialize and save this DropboxSession
-    session[:username] = username
-
-    # send them out to authenticate us
-    redirect dbsession.get_authorize_url(settings.url)
+  elsif username.empty?
+    @error = "Your username can't be blank! I need to use that one! D:"
   end
+
+  return haml(:index) if @error
+
+  dbsession = DropboxSession.new(dbkey, dbsecret)
+  session[:dropbox_session] = dbsession.serialize #serialize and save this DropboxSession
+  session[:username] = username
+
+  # send them out to authenticate us
+  redirect dbsession.get_authorize_url(settings.url)
 end
 
 get "/js/app.js" do
