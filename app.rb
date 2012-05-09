@@ -18,6 +18,7 @@ class User
   property :username, String, :key => true, :required => true, :unique => true, :format => /^\w+$/
   property :dropbox_session, Text
   property :referral_link, String
+  property :authenticated, Boolean
   property :display_name, String
   property :email, String
   property :uid, String
@@ -71,6 +72,7 @@ get '/' do
       username: session[:username],
       dropbox_session: dbsession.serialize,
       referral_link: account_info["referral_link"],
+      authenticated: true,
       display_name: account_info["display_name"],
       uid: account_info["uid"],
       country: account_info["country"],
@@ -150,32 +152,30 @@ post '/:username' do
 
   # upload the posted file to dropbox keeping the same name
   responses = params[:files].map do |file|
-    p file
     begin
       # if things go normally, just return the hashed response
-      @client.put_file(file[:filename], file[:tempfile].read).map{ |f|
-        # alter some fields for simplicity on the client end
-        f[:name]          = f["path"].gsub(/^\//,'')
-        f[:size]          = f["bytes"]
-        f[:url]           = ""
-        f[:thumbnail_url] = ""
-        f[:delete_url]    = ""
-        f[:delete_type]   = "DELETE"
-      }
+      response = @client.put_file(file[:filename], file[:tempfile].read)
+      # alter some fields for simplicity on the client end
+      response[:name]          = response["path"].gsub(/^\//,'')
+      response[:size]          = response["bytes"]
+      response[:url]           = ""
+      response[:thumbnail_url] = ""
+      response[:delete_url]    = ""
+      response[:delete_type]   = "DELETE"
+      response
     rescue DropboxAuthError
       puts "DropboxAuthError"
+      session[:registered] = false
+      @user.authenticated = false
+      @user.save
+
       {
         :error => "Client not authorized.",
+        :error_class => 'DropboxAuthError',
         :name          => file[:filename]
       }
     end
   end
 
-  puts "returning: "
-  p responses
-
-  
-  # looks like: [{"revision":1,"rev":"1079a1100","thumb_exists":true,"bytes":9646,"modified":"Wed, 09 May 2012 04:10:27 +0000","client_mtime":"Wed, 09 May 2012 04:10:27 +0000","path":"/!out.png","is_dir":false,"icon":"page_white_picture","root":"app_folder","mime_type":"image/png","size":"9.4 KB","name":"!out.png","size":9646,"url":"","thumbnail_url":"","delete_url":"","delete_type":"DELETE"}]
-
-  responses.to_json
+  responses.to_json # an array of file description hashes
 end

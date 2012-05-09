@@ -8,6 +8,7 @@ $ ->
     uploadTemplateId: null,
     downloadTemplateId: null,
     uploadTemplate: (o) ->
+      $('.instructions').hide()
       console.log("uploadTemplate")
       rows = $()
       $.each o.files, (index, file) ->
@@ -69,6 +70,12 @@ $ ->
           row.find('.info-col').addClass('error').text(file.error)
           row.find('.status_image').removeClass('s_synced').addClass('s_error')
           row.find('.image_icon').removeClass('s_page_white_get').addClass('s_cross')
+          console.log file.error_class
+          if file.error_class == 'DropboxAuthError'
+            console.log "it's an authentication error!"
+            $('#re-authenticate').show()
+            $('#upload_button').addClass('disabled')
+            $('#upload_button input').prop("disabled", true)
         rows = rows.add(row)
       return rows
     # done: (e,data) ->
