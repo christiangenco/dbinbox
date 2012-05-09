@@ -32,7 +32,8 @@ end
 DataMapper.auto_upgrade!
 
 # dropbox api
-dbkey, dbsecret = 'ribh7ft60gym2l8', 'sj8rz89ril4wl76'
+dbkey = 'ribh7ft60gym2l8'
+dbsecret = File.open(".dbsecret").read
 
 # ----------------------------------------------
 

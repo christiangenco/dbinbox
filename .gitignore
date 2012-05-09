@@ -15,3 +15,6 @@ _ReSharper.*
 
 # from http://gembundler.com/deploying.html
 .bundle
+
+# Ignore secret key
+.dbsecret
