@@ -16,5 +16,6 @@ _ReSharper.*
 # from http://gembundler.com/deploying.html
 .bundle
 
-# Ignore secret key
+# Ignore Dropbox API keys
 .dbsecret
+.dbkey
