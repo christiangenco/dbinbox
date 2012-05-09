@@ -123,40 +123,59 @@ end
 def get_user
   puts "getting user"
   user = User.get(params[:username])
+
+  # check if we're still authenticated
+
 end
 
 get "/:username" do
   puts "get /username"
   @user = get_user
   if !@user
-    @error = "User '#{params[:username]}' not found"
+    @error = "Username '#{params[:username]}' not found. Would you like to link it with a Dropbox account?"
     return haml :index
   end
   haml :upload
 end
 
 post '/:username' do
+  content_type :json
   puts "post /username"
-  @user = get_user
-  return unless @user
+  
+  return unless @user = get_user
 
   redirect '/' unless @user.dropbox_session
   @dbsession = DropboxSession.deserialize(@user.dropbox_session)
-  @client = DropboxClient.new(@dbsession, :app_folder) #raise an exception if session not authorized
+  @client    = DropboxClient.new(@dbsession, :app_folder)
 
   # upload the posted file to dropbox keeping the same name
-  resp = params[:files].map do |file|
-    @client.put_file(file[:filename], file[:tempfile].read)
+  responses = params[:files].map do |file|
+    p file
+    begin
+      # if things go normally, just return the hashed response
+      @client.put_file(file[:filename], file[:tempfile].read).map{ |f|
+        # alter some fields for simplicity on the client end
+        f[:name]          = f["path"].gsub(/^\//,'')
+        f[:size]          = f["bytes"]
+        f[:url]           = ""
+        f[:thumbnail_url] = ""
+        f[:delete_url]    = ""
+        f[:delete_type]   = "DELETE"
+      }
+    rescue DropboxAuthError
+      puts "DropboxAuthError"
+      {
+        :error => "Client not authorized.",
+        :name          => file[:filename]
+      }
+    end
   end
 
-  resp.map{|f|
-    f[:name] = f["path"].gsub(/^\//,'')
-    f[:size] = f["bytes"]
-    f[:url] = ""
-    f[:thumbnail_url] = ""
-    f[:delete_url] = ""
-    f[:delete_type] = "DELETE"
-  }
-  content_type :json
-  resp.to_json
+  puts "returning: "
+  p responses
+
+  
+  # looks like: [{"revision":1,"rev":"1079a1100","thumb_exists":true,"bytes":9646,"modified":"Wed, 09 May 2012 04:10:27 +0000","client_mtime":"Wed, 09 May 2012 04:10:27 +0000","path":"/!out.png","is_dir":false,"icon":"page_white_picture","root":"app_folder","mime_type":"image/png","size":"9.4 KB","name":"!out.png","size":9646,"url":"","thumbnail_url":"","delete_url":"","delete_type":"DELETE"}]
+
+  responses.to_json
 end

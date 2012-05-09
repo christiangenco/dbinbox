@@ -28,6 +28,10 @@ h1{
   vertical-align: middle;
 }
 
+.filelist .error{
+  color: red;
+}
+
 .size {
   color: #888;
 }
