@@ -1,7 +1,9 @@
 * don't render /user if app is deauthenticated
 * save database between updates <--- kind of important
 * fix app hanging on unknown username
+* add support for Gdrive
 * add password-protection
 * if a user's authentication token is invalid, remove the user?
 * fix upload meter
 * add tooltip to "Register" button on /
+* user specified maximum dbinbox size
