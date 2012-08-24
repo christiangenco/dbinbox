@@ -19,3 +19,6 @@ _ReSharper.*
 # Ignore Dropbox API keys
 .dbsecret
 .dbkey
+
+# Ignore locally stored gems
+vendor/
