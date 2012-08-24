@@ -2,13 +2,14 @@
   %img(class="modal-h-img sprite s_upload_32 modal-h-img" src="img/icon_spacer.gif")
   Send files to #{@user.display_name}
 
-%form.span8#re-authenticate{action: "/", method: "post"}
-  %fieldset.control-group
-    %input.span4#username(type="hidden" name="username" value="#{params['username']}")
-    %button.btn.btn-warning(type='submit' title="Re-authenticate to activate your account") 
-      %i.icon-warning-sign.icon-white
-      %span Re-authenticate
-    %span.help-inline It looks like this app was unauthenticated from Dropbox.
+-if false
+  %form.span8#re-authenticate{action: "/", method: "post"}
+    %fieldset.control-group
+      %input.span4#username(type="hidden" name="username" value="#{params['username']}")
+      %button.btn.btn-warning(type='submit' title="Re-authenticate to activate your account") 
+        %i.icon-warning-sign.icon-white
+        %span Re-authenticate
+      %span.help-inline It looks like this app was unauthenticated from Dropbox.
 
 %p.span8.instructions You can select more than one file at a time. You can also drag and drop files anywhere on this page to start uploading.
 
@@ -47,3 +48,11 @@
 
 #dropzone.fade.well 
   %span Drop your file to upload
+
+
+%hr
+
+%p.span8
+  Found a bug? This software is open source! Please let me know on 
+  %a(href="https://github.com/christiangenco/dbinbox") this project's github page
+  and I'll try to fix it! :)
