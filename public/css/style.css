@@ -2,10 +2,6 @@
 
 /*index*/
 
-.input-prepend .add-on {
-  margin-right: -5px; /*bootstrap bug?*/
-}
-
 h1, p.instructions, table{
   margin-bottom: 20px;
 }
