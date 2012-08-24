@@ -9,7 +9,9 @@ require 'dm-migrations'
 require 'dm-validations'
 
 enable :sessions
-set :url, (settings.environment == :production) ? "http://dbinbox.com/" : "http://127.0.0.1:9393/"
+# set :url, (settings.environment == :production) ? "http://dbinbox.com/" : "http://127.0.0.1:9393/"
+# so hackey
+set :url, (!File.exists?("../../projects")) ? "http://dbinbox.com/" : "http://127.0.0.1:9393/"
 
 DataMapper.setup( :default, "sqlite3://#{Dir.pwd}/users.db" )
 
