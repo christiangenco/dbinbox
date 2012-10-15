@@ -100,7 +100,11 @@ $ ->
 
     $('.instructions').hide()
 
-    row = uploadRowHTML("poop filename")
+    filename = $("#timestamp").text()
+    filename_value = $("#filename").val()
+    filename += " " + filename_value if filename_value && filename_value != ""
+    filename += ".txt"
+    row = uploadRowHTML(filename)
     $('.filelist .files').append(row)
 
     $.post($(this).attr("action"), $(this).serialize(), (data, textStatus, jqXHR) -> 

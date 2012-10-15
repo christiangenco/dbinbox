@@ -59,8 +59,8 @@
     %label.control-label(for="filename") Filename
     .controls
       .input-append.input-prepend
-        .add-on=Time.new.strftime("%Y-%m-%d-%H.%M.%S")
-        %input(type="text" name="filename" placeholder="optional ")
+        .add-on#timestamp=Time.new.strftime("%Y-%m-%d-%H.%M.%S")
+        %input(type="text" name="filename" id="filename" placeholder="optional ")
         .add-on .txt
   .control-group
     %label.control-label(for="message") Text
