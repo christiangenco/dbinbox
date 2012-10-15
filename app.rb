@@ -39,6 +39,15 @@ DataMapper.auto_upgrade!
 dbkey = File.read(".dbkey")
 dbsecret = File.read(".dbsecret")
 
+class Numeric
+  def to_human
+    units = %w{bytes KB MB GB TB}
+    e = (Math.log(self)/Math.log(1024)).floor
+    s = "%.3f" % (to_f / 1024**e)
+    s.sub(/\.?0*$/, " " + units[e])
+  end
+end
+
 # ----------------------------------------------
 
 # user visits homepage
@@ -169,6 +178,7 @@ post '/:username' do
       # alter some fields for simplicity on the client end
       response[:name]          = response["path"].gsub(/^\//,'')
       response[:size]          = response["bytes"]
+      response[:human_size]    = response["bytes"].to_human
       response[:url]           = ""
       response[:thumbnail_url] = ""
       response[:delete_url]    = ""
@@ -194,7 +204,7 @@ end
 post '/:username/send_text' do
   content_type :json
   puts "post /#{params['username']}/send_text"
-  
+
   return unless @user = get_user
 
   redirect '/' unless @user.dropbox_session
@@ -216,6 +226,7 @@ post '/:username/send_text' do
       # alter some fields for simplicity on the client end
       response[:name]          = response["path"].gsub(/^\//,'')
       response[:size]          = response["bytes"]
+      response[:human_size]    = response["bytes"].to_human
       response[:url]           = ""
       response[:thumbnail_url] = ""
       response[:delete_url]    = ""

@@ -4,7 +4,7 @@ $ ->
       '<tr class="template-upload">' +
       '<td class="filename-col span7">' +
       '<img class="sprite s_page_white_get" src="img/icon_spacer.gif" />' +
-      '<span class="name"></span> - ' +
+      '<span class="name"></span>' +
       '<span class="size"></span>' +
       '</td>' +
       '<td class="info-col span4">uploading to Dropbox...</td>' +
@@ -34,7 +34,7 @@ $ ->
     )
 
     row.find('.name').text(file.name)
-    row.find('.size').text('-' + file.size) if file.size
+    row.find('.size').text('-' + file.human_size) if file.human_size
     # update the icon
     $(row.find("img.s_page_white_get")[0]).addClass('s_' + file.icon).removeClass("s_page_white_get") if file.icon
     if file.error
@@ -62,8 +62,8 @@ $ ->
       $.each o.files, (index, file) ->
         console.log(file)
         console.log("filename = " + file.name)
-        console.log("size = " + o.formatFileSize(file.size))
-        rows = rows.add(uploadRowHTML(file.name, o.formatFileSize(file.size), file.error))
+        console.log("size = " + file.human_size)
+        rows = rows.add(uploadRowHTML(file.name, file.human_size, file.error))
       return rows
     downloadTemplate: (o) ->
       console.log("downloadtemplate")
@@ -82,7 +82,6 @@ $ ->
           $('#re-authenticate').show()
           $('#upload_button').addClass('disabled')
           $('#upload_button input').prop("disabled", true)
-        file.size = o.formatFileSize(file.size) if file.size
         rows = rows.add(downloadRowHTML(file))
       return rows
     # done: (e,data) ->
