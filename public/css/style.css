@@ -28,6 +28,10 @@ h1{
   color: red;
 }
 
+.filelist tr:nth-child(even) {
+  background: #EEE;
+}
+
 .size {
   color: #888;
 }
