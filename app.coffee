@@ -96,8 +96,16 @@ $ ->
   # send text
   $("form#send_text").submit (e) ->
     e.preventDefault()
+    form = $(this)
 
     $('.instructions').hide()
+
+    submit_button = form.children("input[type=submit]")[0]
+    previous_submit_button_value = submit_button.value
+    submit_button.value = "Sending..."
+
+    # disable everything
+    form.find("input, textarea").addClass("disabled").attr("disabled", "disabled")
 
     filename = $("#timestamp").text()
     filename_value = $("#filename").val()
@@ -106,10 +114,13 @@ $ ->
     row = uploadRowHTML(filename)
     $('.filelist .files').append(row)
 
-    $.post($(this).attr("action"), $(this).serialize(), (data, textStatus, jqXHR) -> 
-      console.log("submitted!")
-      console.log(data)
-      console.log(downloadRowHTML(data))
+    $.post(form.attr("action"), form.serialize(), (data, textStatus, jqXHR) -> 
+      console.log("text uploaded")
+      # re-enable everything
+      form.find("input, textarea").removeClass("disabled").removeAttr("disabled")
+      console.log(form)
+      form[0].reset()
+      submit_button.value = previous_submit_button_value
       $(row).replaceWith(downloadRowHTML(data))
     )
 

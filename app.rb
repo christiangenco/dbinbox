@@ -214,7 +214,7 @@ post '/:username/send_text' do
   message = params["message"]
   # add header to message
   # use @env['REMOTE_ADDR'] if request.ip doesn't work
-  message = "Uploaded #{Time.now.to_s} from #{request.ip}\n\n" + message
+  message = "Uploaded #{Time.now.to_s} from #{request.ip}\n\n#{message}"
 
   filename = Time.new.strftime("%Y-%m-%d-%H.%M.%S")
   filename += " " + params["filename"] if params["filename"] && !params["filename"].empty?
