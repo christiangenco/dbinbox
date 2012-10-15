@@ -100,10 +100,14 @@ $ ->
 
     $('.instructions').hide()
 
-    $('.filelist .files').append(uploadRowHTML("poop filename"))
+    row = uploadRowHTML("poop filename")
+    $('.filelist .files').append(row)
 
     $.post($(this).attr("action"), $(this).serialize(), (data, textStatus, jqXHR) -> 
       console.log("submitted!")
+      console.log(data)
+      console.log(downloadRowHTML(data))
+      $(row).replaceWith(downloadRowHTML(data))
     )
 
   # dropzone effect
