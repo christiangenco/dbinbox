@@ -18,6 +18,35 @@ $ ->
     row.find('.error').text(error) if error
     row
 
+  downloadRowHTML = (file) ->
+    row = $(
+      '<tr class="template-download fade">' +
+      '<td class="filename-col span7">' +
+      '<img class="sprite s_page_white_get image_icon" src="img/icon_spacer.gif" />' +
+      '<span class="name"></span>' +
+      '<span class="size"></span>' +
+      '</td>' +
+      '<td class="info-col span4"></td>' +
+      '<td class="status-col span1">' +
+      '<img class="sprite s_synced status_image" src="img/icon_spacer.gif" />' +
+      '</td>' +
+      "</tr>"
+    )
+
+    row.find('.name').text(file.name)
+    row.find('.size').text('-' + file.size) if file.size
+    # update the icon
+    $(row.find("img.s_page_white_get")[0]).addClass('s_' + file.icon).removeClass("s_page_white_get") if file.icon
+    if file.error
+      console.log "there are errors in the file: "
+      console.log file.error_message
+      console.log file.error
+      row.find('.info-col').addClass('error').text(file.error)
+      row.find('.status_image').removeClass('s_synced').addClass('s_error')
+      row.find('.image_icon').removeClass('s_page_white_get').addClass('s_cross')
+      console.log file.error_class
+    row
+
   $('#upload').fileupload({
     dataType: 'json',
     autoUpload: true,
@@ -47,38 +76,14 @@ $ ->
 
         console.log("filename = " + file.name)
         console.log("size = " + file.bytes)
-        row = $(
-          '<tr class="template-download fade">' +
-          '<td class="filename-col span7">' +
-          '<img class="sprite s_page_white_get image_icon" src="img/icon_spacer.gif" />' +
-          '<span class="name"></span>' +
-          '<span class="size"></span>' +
-          '</td>' +
-          '<td class="info-col span4"></td>' +
-          '<td class="status-col span1">' +
-          '<img class="sprite s_synced status_image" src="img/icon_spacer.gif" />' +
-          '</td>' +
-          "</tr>"
-        )
-
-        row.find('.name').text(file.name)
-        row.find('.size').text('-' + o.formatFileSize(file.size)) if file.size
-        # update the icon 
-        $(row.find("img.s_page_white_get")[0]).addClass('s_' + file.icon).removeClass("s_page_white_get") if file.icon
-        if file.error
-          console.log "there are errors in the file: "
-          console.log file.error_message
-          console.log file.error
-          row.find('.info-col').addClass('error').text(file.error)
-          row.find('.status_image').removeClass('s_synced').addClass('s_error')
-          row.find('.image_icon').removeClass('s_page_white_get').addClass('s_cross')
-          console.log file.error_class
-          if file.error_class == 'DropboxAuthError'
-            console.log "it's an authentication error!"
-            $('#re-authenticate').show()
-            $('#upload_button').addClass('disabled')
-            $('#upload_button input').prop("disabled", true)
-        rows = rows.add(row)
+      
+        if file.error && file.error_class == 'DropboxAuthError'
+          console.log "it's an authentication error!"
+          $('#re-authenticate').show()
+          $('#upload_button').addClass('disabled')
+          $('#upload_button input').prop("disabled", true)
+        # file.size = o.formatFileSize(file.size) if file.size
+        rows = rows.add(downloadRowHTML(file))
       return rows
     # done: (e,data) ->
     #   console.log e
