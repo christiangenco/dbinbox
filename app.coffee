@@ -1,7 +1,7 @@
 $ ->
   uploadRowHTML = (filename, filesize=-1, error=null) ->
     row = $(
-      '<tr class="template-upload fade">' +
+      '<tr class="template-upload">' +
       '<td class="filename-col span7">' +
       '<img class="sprite s_page_white_get" src="img/icon_spacer.gif" />' +
       '<span class="name"></span> - ' +
@@ -14,13 +14,13 @@ $ ->
       "</tr>"
     )
     row.find('.name').text(filename)
-    row.find('.size').text(filesize)
+    row.find('.size').text(filesize) unless filesize == -1
     row.find('.error').text(error) if error
     row
 
   downloadRowHTML = (file) ->
     row = $(
-      '<tr class="template-download fade">' +
+      '<tr class="template-download">' +
       '<td class="filename-col span7">' +
       '<img class="sprite s_page_white_get image_icon" src="img/icon_spacer.gif" />' +
       '<span class="name"></span>' +
@@ -97,6 +97,10 @@ $ ->
   # send text
   $("form#send_text").submit (e) ->
     e.preventDefault()
+
+    $('.instructions').hide()
+
+    $('.filelist .files').append(uploadRowHTML("poop filename"))
 
     $.post($(this).attr("action"), $(this).serialize(), (data, textStatus, jqXHR) -> 
       console.log("submitted!")
