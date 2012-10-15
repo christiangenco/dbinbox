@@ -82,7 +82,7 @@ $ ->
           $('#re-authenticate').show()
           $('#upload_button').addClass('disabled')
           $('#upload_button input').prop("disabled", true)
-        # file.size = o.formatFileSize(file.size) if file.size
+        file.size = o.formatFileSize(file.size) if file.size
         rows = rows.add(downloadRowHTML(file))
       return rows
     # done: (e,data) ->
