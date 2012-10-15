@@ -53,7 +53,7 @@
 
 %form.form-horizontal.span12{action: params["username"] + "/send_text", id: 'send_text', method: 'post'}
   %legend 
-    %img(class="modal-h-img sprite s_page_white_text_gray_32 modal-h-img" src="img/icon_spacer.gif")
+    %img(class="modal-h-img sprite s_page_white_gray_32 modal-h-img" src="img/icon_spacer.gif")
     Send text
   .control-group
     %label.control-label(for="filename") Filename
@@ -66,7 +66,9 @@
     %label.control-label(for="message") Text
     .controls
       %textarea(name="message")
-      %input.btn.btn-primary(type="submit" value="Send")
+  %input.btn.btn-primary#send_text(type="submit" value="Send .txt" style="float: right")
+
+.clearfix
 
 %hr
 
