@@ -49,6 +49,15 @@
 #dropzone.fade.well 
   %span Drop your file to upload
 
+.clearfix
+
+%hr
+
+%p.span8
+  You can also send text to be uploaded as a plaintext file.
+  %form{action: params["username"] + "/send_text", id: 'send_text', method: 'post'}
+    %textarea(name="message")
+    %input.btn.btn-primary(type="submit" value="Send")
 
 %hr
 

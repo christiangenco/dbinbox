@@ -201,6 +201,32 @@ post '/:username/send_text' do
   @dbsession = DropboxSession.deserialize(@user.dropbox_session)
   @client    = DropboxClient.new(@dbsession, :app_folder)
 
-  puts params
-  params["message"]
+  message = params["message"]
+  message = "Uploaded #{Time.now.to_s} from #{}\n\n" + message
+
+  filename = Time.new.strftime("%Y-%m-%d-%H.%M.%S" + ".txt")
+
+  begin
+      # if things go normally, just return the hashed response
+      response = @client.put_file(filename, message)
+      # alter some fields for simplicity on the client end
+      response[:name]          = response["path"].gsub(/^\//,'')
+      response[:size]          = response["bytes"]
+      response[:url]           = ""
+      response[:thumbnail_url] = ""
+      response[:delete_url]    = ""
+      response[:delete_type]   = "DELETE"
+      response
+    rescue DropboxAuthError
+      puts "DropboxAuthError"
+      session[:registered] = false
+      @user.authenticated  = false
+      @user.save
+
+      {
+        :error       => "Client not authorized.",
+        :error_class => 'DropboxAuthError',
+        :name        => file[:filename]
+      }
+    end.to_json
 end
