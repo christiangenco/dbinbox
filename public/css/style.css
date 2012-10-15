@@ -42,7 +42,7 @@ h1{
     display: none;
     background: lawngreen;
     width: 50%;
-    position: absolute;
+    position: fixed;
     top: 25%;
     left: 25%;
     text-align: center;
