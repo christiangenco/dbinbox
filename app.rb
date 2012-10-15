@@ -206,6 +206,7 @@ post '/:username/send_text' do
 
   filename = Time.new.strftime("%Y-%m-%d-%H.%M.%S")
   filename += " " + params["filename"] if params["filename"] && !params["filename"].empty?
+  filename += ".txt"
 
   begin
       # if things go normally, just return the hashed response
