@@ -1,5 +1,5 @@
-* don't render /user if app is deauthenticated
 * save database between updates <--- kind of important
+* don't render /user if app is deauthenticated
 * fix app hanging on unknown username
 * add support for Gdrive
 * add password-protection
@@ -7,3 +7,6 @@
 * fix upload meter
 * add tooltip to "Register" button on /
 * user specified maximum dbinbox size
+  * folders for people uploading?
+  * send upload link with predefined limit?
+* fallback on HTML requests (no js)
