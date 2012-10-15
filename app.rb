@@ -204,7 +204,8 @@ post '/:username/send_text' do
   message = params["message"]
   message = "Uploaded #{Time.now.to_s} from #{}\n\n" + message
 
-  filename = Time.new.strftime("%Y-%m-%d-%H.%M.%S" + ".txt")
+  filename = Time.new.strftime("%Y-%m-%d-%H.%M.%S")
+  filename += " " + params["filename"] if params["filename"] && !params["filename"].empty?
 
   begin
       # if things go normally, just return the hashed response

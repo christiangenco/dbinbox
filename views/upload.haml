@@ -14,8 +14,8 @@
 %p.span8.instructions You can select more than one file at a time. You can also drag and drop files anywhere on this page to start uploading.
 
 
-%form{action: params["username"], multipart: true, id: 'upload'}
-  %table.filelist.span12
+%form.span12{action: params["username"], multipart: true, id: 'upload'}
+  %table.filelist
     %tbody.files 
     -#
       %tr
@@ -51,13 +51,22 @@
 
 .clearfix
 
-%hr
-
-%p.span8
-  You can also send text to be uploaded as a plaintext file.
-  %form{action: params["username"] + "/send_text", id: 'send_text', method: 'post'}
-    %textarea(name="message")
-    %input.btn.btn-primary(type="submit" value="Send")
+%form.form-horizontal.span12{action: params["username"] + "/send_text", id: 'send_text', method: 'post'}
+  %legend 
+    %img(class="modal-h-img sprite s_page_white_text_gray_32 modal-h-img" src="img/icon_spacer.gif")
+    Send text
+  .control-group
+    %label.control-label(for="filename") Filename
+    .controls
+      .input-append.input-prepend
+        .add-on=Time.new.strftime("%Y-%m-%d-%H.%M.%S")
+        %input(type="text" name="filename" placeholder="optional ")
+        .add-on .txt
+  .control-group
+    %label.control-label(for="message") Text
+    .controls
+      %textarea(name="message")
+      %input.btn.btn-primary(type="submit" value="Send")
 
 %hr
 
