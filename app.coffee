@@ -87,6 +87,14 @@ $ ->
     #     $('<p/>').text(file.path).appendTo(document.body)
   })
   
+  # send text
+  $("form#send_text").submit (e) ->
+    e.preventDefault()
+
+    $.post($(this).attr("action"), $(this).serialize(), (data, textStatus, jqXHR) -> 
+      console.log("submitted!")
+    )
+
   # dropzone effect
   $(document).bind 'dragover', (e) ->
     dropZone = $('#dropzone')
