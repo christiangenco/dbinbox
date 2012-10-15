@@ -153,7 +153,7 @@ end
 
 post '/:username' do
   content_type :json
-  puts "post /username"
+  puts "post /#{params['username']}"
   
   return unless @user = get_user
 
@@ -177,16 +177,30 @@ post '/:username' do
     rescue DropboxAuthError
       puts "DropboxAuthError"
       session[:registered] = false
-      @user.authenticated = false
+      @user.authenticated  = false
       @user.save
 
       {
-        :error => "Client not authorized.",
+        :error       => "Client not authorized.",
         :error_class => 'DropboxAuthError',
-        :name          => file[:filename]
+        :name        => file[:filename]
       }
     end
   end
 
   responses.to_json # an array of file description hashes
+end
+
+post '/:username/send_text' do
+  content_type :json
+  puts "post /#{params['username']}/send_text"
+  
+  return unless @user = get_user
+
+  redirect '/' unless @user.dropbox_session
+  @dbsession = DropboxSession.deserialize(@user.dropbox_session)
+  @client    = DropboxClient.new(@dbsession, :app_folder)
+
+  puts params
+  params["message"]
 end
