@@ -1,4 +1,23 @@
 $ ->
+  uploadRowHTML = (filename, filesize=-1, error=null) ->
+    row = $(
+      '<tr class="template-upload fade">' +
+      '<td class="filename-col span7">' +
+      '<img class="sprite s_page_white_get" src="img/icon_spacer.gif" />' +
+      '<span class="name"></span> - ' +
+      '<span class="size"></span>' +
+      '</td>' +
+      '<td class="info-col span4">uploading to Dropbox...</td>' +
+      '<td class="status-col span1">' +
+      '<img class="" src="img/ajax-loading-small.gif" />' +
+      '</td>' +
+      "</tr>"
+    )
+    row.find('.name').text(filename)
+    row.find('.size').text(filesize)
+    row.find('.error').text(error) if error
+    row
+
   $('#upload').fileupload({
     dataType: 'json',
     autoUpload: true,
@@ -15,24 +34,7 @@ $ ->
         console.log(file)
         console.log("filename = " + file.name)
         console.log("size = " + o.formatFileSize(file.size))
-        row = $(
-          '<tr class="template-upload fade">' +
-          '<td class="filename-col span7">' +
-          '<img class="sprite s_page_white_get" src="img/icon_spacer.gif" />' +
-          '<span class="name"></span> - ' +
-          '<span class="size"></span>' +
-          '</td>' +
-          '<td class="info-col span4">uploading to Dropbox...</td>' +
-          '<td class="status-col span1">' +
-          '<img class="" src="img/ajax-loading-small.gif" />' +
-          '</td>' +
-          "</tr>"
-        )
-
-        row.find('.name').text(file.name)
-        row.find('.size').text(o.formatFileSize(file.size))
-        row.find('.error').text(file.error) if file.error
-        rows = rows.add(row)
+        rows = rows.add(uploadRowHTML(file.name, o.formatFileSize(file.size), file.error))
       return rows
     downloadTemplate: (o) ->
       console.log("downloadtemplate")
