@@ -10,3 +10,5 @@
   * folders for people uploading?
   * send upload link with predefined limit?
 * fallback on HTML requests (no js)
+* allow uploader to add "text" to note with upload? 
+* Fix text field - doesn't seem to work. What is is supposed to do?
