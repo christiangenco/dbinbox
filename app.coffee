@@ -92,6 +92,13 @@ $ ->
     #     console.log file.pat`h
     #     $('<p/>').text(file.path).appendTo(document.body)
   })
+  
+  # hide send text div until "send text" button is pressed
+  $("#send_text").slideUp()
+  $("#show_send_message").fadeIn()
+  $("#show_send_message").click ->
+    $(this).fadeOut()
+    $("#send_text").slideDown()
 
   # send text
   $("form#send_text").submit (e) ->
