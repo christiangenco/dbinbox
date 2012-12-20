@@ -22,3 +22,5 @@ _ReSharper.*
 
 # Ignore locally stored gems
 vendor/
+
+dev
