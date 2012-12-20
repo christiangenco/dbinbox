@@ -3,7 +3,7 @@ require 'dropbox_sdk'
 require 'json'
 require 'haml'
 require 'coffee-script'
-# database
+# database from http://datamapper.org/getting-started.html
 require 'dm-core'
 require 'dm-migrations'
 require 'dm-validations'
