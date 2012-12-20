@@ -43,12 +43,18 @@ set :scm, :none
 # set :copy_cache, "#{copy_dir}/#{application}" # Directory in which the local copy will reside. Defaults to /tmp/#{application}. Note that copy_dir must not be the same as (nor inside) copy_cache and copy_cache must not exist before deploy:cold.
 # set :copy_exclude, [".svn", "**/.svn"] # Prevent Subversion directories being copied across.
 
+
 role :app, location
 role :web, location
 role :db,  location, :primary => true
 
 # Override default tasks which are not relevant to a non-rails app.
 namespace :deploy do
+  desc "Make symlink for users database" 
+  task :symlink_database do
+    run "ln -nfs #{shared_path}/users.db #{release_path}/users.db" 
+  end
+
   task :start, :roles => [:web, :app] do
     run "cd #{deploy_to}/current && bundle exec thin -C thin/production_config.yml -R config.ru start"
   end
@@ -68,3 +74,4 @@ namespace :deploy do
     deploy.start
   end
 end
+after 'deploy:update_code', 'deploy:symlink_database'
