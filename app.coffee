@@ -92,11 +92,12 @@ $ ->
     #     console.log file.pat`h
     #     $('<p/>').text(file.path).appendTo(document.body)
   })
-  
+
   # send text
   $("form#send_text").submit (e) ->
     e.preventDefault()
     form = $(this)
+    formData = form.serialize()
 
     $('.instructions').hide()
 
@@ -107,6 +108,7 @@ $ ->
     # disable everything
     form.find("input, textarea").addClass("disabled").attr("disabled", "disabled")
 
+    # calculate the same filename the server will calculate so we can update the UI right away
     filename = $("#timestamp").text()
     filename_value = $("#filename").val()
     filename += " " + filename_value if filename_value && filename_value != ""
@@ -114,7 +116,7 @@ $ ->
     row = uploadRowHTML(filename)
     $('.filelist .files').append(row)
 
-    $.post(form.attr("action"), form.serialize(), (data, textStatus, jqXHR) -> 
+    $.post(form.attr("action"), formData, (data, textStatus, jqXHR) -> 
       console.log("text uploaded")
       # re-enable everything
       form.find("input, textarea").removeClass("disabled").removeAttr("disabled")
