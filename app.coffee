@@ -1,3 +1,5 @@
+window.console ||= {log: -> {}}
+
 $ ->
   uploadRowHTML = (filename, filesize=-1, error=null) ->
     row = $(
