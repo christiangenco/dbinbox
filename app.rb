@@ -41,6 +41,7 @@ dbsecret = File.read(".dbsecret")
 
 class Numeric
   def to_human
+    return "empty" if self.zero?
     units = %w{bytes KB MB GB TB}
     e = (Math.log(self)/Math.log(1024)).floor
     s = "%.3f" % (to_f / 1024**e)
