@@ -162,7 +162,9 @@ get "/:username" do
 end
 
 post '/:username' do
-  content_type :json
+  # IE 9 and below tries to download the result if Content-Type is application/json
+  content_type (request.user_agent.index(/MSIE [6-9]/) ? 'text/plain' : :json)
+
   puts "post /#{params['username']}"
   
   return unless @user = get_user
@@ -203,7 +205,9 @@ post '/:username' do
 end
 
 post '/:username/send_text' do
-  content_type :json
+  # IE 9 and below tries to download the result if Content-Type is application/json
+  content_type (request.user_agent.index(/MSIE [6-9]/) ? 'text/plain' : :json)
+
   puts "post /#{params['username']}/send_text"
 
   return unless @user = get_user
