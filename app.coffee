@@ -139,6 +139,8 @@ $ ->
   $(document).bind 'dragover', (e) ->
     dropZone = $('#dropzone')
     timeout = window.dropZoneTimeout
+    $('.instructions').addClass('hover');
+
     if !timeout
       dropZone.addClass('in') 
     else
@@ -148,6 +150,7 @@ $ ->
     else
       dropZone.removeClass('hover');
     window.dropZoneTimeout = setTimeout (->
+      $('.instructions').removeClass('hover');
       window.dropZoneTimeout = null;
       dropZone.removeClass('in hover');
-      ), 100
+    ), 100

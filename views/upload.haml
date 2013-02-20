@@ -11,7 +11,7 @@
         %span Re-authenticate
       %span.help-inline It looks like this app was unauthenticated from Dropbox.
 
-%p.span8.instructions You can select more than one file at a time. You can also drag and drop files anywhere on this page to start uploading.
+.span8.offset2.instructions drag your file(s) here to upload
 
 
 %form.span12{action: params["username"], multipart: true, id: 'upload'}
@@ -49,8 +49,8 @@
     .progress-extended &nbsp;
   .fileupload-loading
 
-#dropzone.fade.well 
-  %span Drop your file to upload
+#dropzone
+  %span drop your file(s) to upload
 
 .clearfix
 
