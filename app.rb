@@ -17,6 +17,12 @@ set :url, production ? "http://dbinbox.com/" : "http://127.0.0.1:9393/"
 directory = production ? File.expand_path("../../shared") : Dir.pwd
 DataMapper.setup(:default, "sqlite3://#{File.join(directory, "users.db")}")
 
+# enable logging
+require 'logger'
+logdir = File.join(directory, "log")
+Dir.mkdir(logdir) unless File.directory? logdir
+@@log = Logger.new(File.join(logdir, "dbinbox.log"))
+
 class User
   include DataMapper::Resource
   property :username, String, :key => true, :required => true, :unique => true, :format => /^\w+$/
@@ -68,9 +74,10 @@ end
 
 get '/' do
   if !params[:oauth_token]
-    # first-time user!
+    @@log.info "first-time user!"
     haml :index
   else
+    @@log.info "Creating account for \"#{session[:username]}\"."
     # the user has returned from Dropbox
     # we've been authorized, so now request an access_token
     dbsession = DropboxSession.deserialize(session[:dropbox_session])
@@ -98,9 +105,11 @@ get '/' do
     )
 
     if @user.saved?
+      @@log.info "\"#{session[:username]}\"'s account has been created."
       session[:registered] = true
       haml :index
     else
+      @@log.info "\"#{session[:username]}\"'s account could not be created."
       @error = "Sorry, your information couldn't be saved: #{@user.errors.map{|e| e.to_s}}. Please try again or report the issue to @cgenco."
       haml :index
     end
@@ -110,6 +119,7 @@ end
 # request a username
 post '/' do
   username = params['username']
+  @@log.info "\"#{username}\" username requested"
 
   # if the user already exists and is currently authenticated
   # or if the requested username isn't composed of word characters
@@ -152,7 +162,7 @@ def get_user
 end
 
 get "/:username" do
-  puts "get /username"
+  @@log.info "/#{params[:username]}"
   @user = get_user
   if !@user
     @error = "Username '#{params[:username]}' not found. Would you like to link it with a Dropbox account?"
@@ -162,10 +172,11 @@ get "/:username" do
 end
 
 post '/:username' do
+  filenames = params[:files].map{|f| f[:filename]}.join(', ')
+  @@log.info "Uploading files to /#{params[:username]}: #{filenames}"
+
   # IE 9 and below tries to download the result if Content-Type is application/json
   content_type (request.user_agent.index(/MSIE [6-9]/) ? 'text/plain' : :json)
-
-  puts "post /#{params['username']}"
   
   return unless @user = get_user
 
@@ -188,11 +199,10 @@ post '/:username' do
       response[:delete_type]   = "DELETE"
       response
     rescue DropboxAuthError
-      puts "DropboxAuthError"
+      @@log.error "DropboxAuthError"
       session[:registered] = false
       @user.authenticated  = false
       @user.save
-
       {
         :error       => "Client not authorized.",
         :error_class => 'DropboxAuthError',
@@ -205,6 +215,8 @@ post '/:username' do
 end
 
 post '/:username/send_text' do
+  @@log.info "Sending text to /#{params[:username]}: \"#{params["message"]}\""
+
   # IE 9 and below tries to download the result if Content-Type is application/json
   content_type (request.user_agent.index(/MSIE [6-9]/) ? 'text/plain' : :json)
 

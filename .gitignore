@@ -12,6 +12,7 @@ _ReSharper.*
 
 # Database files
 *.db
+*.backup
 
 # from http://gembundler.com/deploying.html
 .bundle
@@ -24,3 +25,6 @@ _ReSharper.*
 vendor/
 
 dev
+
+# ignore the log file
+log/
