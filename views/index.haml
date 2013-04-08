@@ -13,7 +13,7 @@
 -else
   %p{style: "color: green"} You're registered!
   %p
-    -url = settings.url + session[:username] if session[:username]
+    -url = url('/') + session[:username] if session[:username]
     %a{href: url}=url
 
 .row
