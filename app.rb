@@ -9,10 +9,7 @@ require 'dm-migrations'
 require 'dm-validations'
 
 enable :sessions
-# set :url, (settings.environment == :production) ? "http://dbinbox.com/" : "http://127.0.0.1:9393/"
-# so hackey
 production = !File.exists?("../../projects")
-set :url, production ? "http://dbinbox.com/" : "http://127.0.0.1:9393/"
 
 directory = production ? File.expand_path("../../shared") : Dir.pwd
 DataMapper.setup(:default, "sqlite3://#{File.join(directory, "users.db")}")
@@ -140,7 +137,7 @@ post '/' do
   session[:username] = username
 
   # send them out to authenticate us
-  redirect dbsession.get_authorize_url(settings.url)
+  redirect dbsession.get_authorize_url(url('/'))
 end
 
 get "/js/app.js" do
