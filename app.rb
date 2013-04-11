@@ -24,10 +24,10 @@ class User
   include DataMapper::Resource
   property :username, String, :key => true, :required => true, :unique => true, :format => /^\w+$/
   property :dropbox_session, Text
-  property :referral_link, String
+  property :referral_link, String, :length => 250
   property :authenticated, Boolean
-  property :display_name, String
-  property :email, String
+  property :display_name, String, :length => 250
+  property :email, String, :length => 250
   property :uid, String
   property :country, String
   property :quota, Integer
