@@ -20,6 +20,8 @@ logdir = File.join(directory, "log")
 Dir.mkdir(logdir) unless File.directory? logdir
 @@log = Logger.new(File.join(logdir, "dbinbox.log"))
 
+@@log.info "starting with url: #{url("/")}"
+
 class User
   include DataMapper::Resource
   property :username, String, :key => true, :required => true, :unique => true, :format => /^\w+$/
@@ -107,7 +109,8 @@ get '/' do
       haml :index
     else
       @@log.info "\"#{session[:username]}\"'s account could not be created."
-      @error = "Sorry, your information couldn't be saved: #{@user.errors.map{|e| e.to_s}.join(', ')}. Please try again or report the issue to @cgenco."
+      @@log.info @user
+      @error = "Sorry, your information couldn't be saved: #{@user.errors.map(&:to_s).join(', ')}. Please try again or report the issue to <a href='https://twitter.com/cgenco'>@cgenco</a>."
       haml :index
     end
   end
