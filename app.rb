@@ -147,7 +147,7 @@ get "/js/app.js" do
 end
 
 get "/logout" do
-  session = nil
+  session.clear
   redirect "/"
 end
 
