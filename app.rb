@@ -70,6 +70,8 @@ end
 # if exists, look up access token and use that
 
 get '/' do
+  @@log.info request.base_url
+  @@log.info url('/')
   if !params[:oauth_token]
     @@log.info "first-time user!"
     haml :index
