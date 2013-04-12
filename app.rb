@@ -90,7 +90,7 @@ get '/' do
     @user = User.create(
       username: session[:username],
       dropbox_session: dbsession.serialize,
-      referral_link: account_info["referral_link"],
+      # referral_link: account_info["referral_link"],
       authenticated: true,
       display_name: account_info["display_name"],
       uid: account_info["uid"],
@@ -107,7 +107,7 @@ get '/' do
       haml :index
     else
       @@log.info "\"#{session[:username]}\"'s account could not be created."
-      @error = "Sorry, your information couldn't be saved: #{@user.errors.map{|e| e.to_s}}. Please try again or report the issue to @cgenco."
+      @error = "Sorry, your information couldn't be saved: #{@user.errors.map{|e| e.to_s}.join(', ')}. Please try again or report the issue to @cgenco."
       haml :index
     end
   end
