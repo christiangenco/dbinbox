@@ -20,8 +20,6 @@ logdir = File.join(directory, "log")
 Dir.mkdir(logdir) unless File.directory? logdir
 @@log = Logger.new(File.join(logdir, "dbinbox.log"))
 
-@@log.info "starting with url: #{url("/")}"
-
 class User
   include DataMapper::Resource
   property :username, String, :key => true, :required => true, :unique => true, :format => /^\w+$/
