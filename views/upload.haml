@@ -13,8 +13,10 @@
 
 -if @user.password.nil? || @allowed_to_upload
   = haml(:upload_dropzone, :layout => false)
+  = haml(:upload_admin, :layout => false)
 -else
   = haml(:upload_access_code_required, :layout => false)
+  = haml(:upload_admin, :layout => false)
 
 %hr
 

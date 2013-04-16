@@ -1,0 +1,16 @@
+%form.form-horizontal.span12{action: params["username"] + "/access_code"}
+  %p
+    This dbinbox requires entering the correct access code before uploading
+    files. If you are the owner of this Dropbox account, you may change the
+    access code by clicking the Admin button.
+  .control-group
+    %label.control-label(for="access_code") Access Code
+    .controls
+      %input(type="text" name="access_code" id="access_code")
+  %button.btn.btn-primary{type: "submit", style: "float: right; margin-right: 10px;"}
+    Submit
+  %span.btn#show_admin_form{style: "float: right; margin-right: 10px; display: none"}
+    %i.icon-wrench.icon-black
+    %span Admin
+
+.clearfix

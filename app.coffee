@@ -95,6 +95,13 @@ $ ->
     #     $('<p/>').text(file.path).appendTo(document.body)
   })
   
+  # hide admin div until "admin" button is pressed
+  $("#admin_form").slideUp()
+  $("#show_admin_form").fadeIn()
+  $("#show_admin_form").click ->
+    $(this).fadeOut()
+    $("#admin_form").slideDown()
+
   # hide send text div until "send text" button is pressed
   $("#send_text").slideUp()
   $("#show_send_message").fadeIn()

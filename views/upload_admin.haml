@@ -1,0 +1,15 @@
+%form.form-horizontal.span12{action: params["username"] + "/admin", id: 'admin_form', method: 'post'}
+  %legend
+    %img(class="modal-h-img sprite s_page_white_gray_32 modal-h-img" src="img/icon_spacer.gif")
+    Change settings (Dropbox owner only)
+  .control-group
+    %label.control-label(for="access_code") New Access Code
+    .controls
+      %input(type="text" name="access_code" id="access_code")
+  .control-group
+    %label.control-label(for="clear_access_code") Clear Access Code
+    .controls
+      %input(type="checkbox" name="clear_access_code" id="clear_access_code")
+  %input.btn.btn-primary(type="submit" value="Submit" style="float: right")
+
+.clearfix
