@@ -313,6 +313,7 @@ post '/:username/admin' do
   # The user wants to change the dbinbox settings.
   # First check with Dropbox to make sure they own the account
 
+  session[:clear_access_code] = params[:clear_access_code]
   session[:access_code] = BCrypt::Password.create(params[:access_code])
   redirect_with_authenticated_dropboxsession(url("/#{params[:username]}/admin"))
 end
@@ -331,12 +332,21 @@ get '/:username/admin' do
   dbclient = DropboxClient.new(dbsession)
   account_info = dbclient.account_info
 
-  if @user.uid.to_i == account_info['uid']
-    @user.password = session.delete(:access_code)
-    @user.save
-    redirect url("/#{@user.username}")
-  else
+  unless @user.uid.to_i == account_info['uid']
     @error = "You must be the owner of the Dropbox to change the access code"
     redirect url("/#{@user.username}")
   end
+
+  # Get our variables out of the sesson so we don't accidentally reuse them
+  access_code = session.delete(:access_code)
+  clear_access_code = session.delete(:clear_access_code)
+
+  if clear_access_code
+    @user.password = nil
+  elsif access_code
+    @user.password = access_code
+  end
+
+  @user.save
+  redirect url("/#{@user.username}")
 end
