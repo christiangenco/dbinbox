@@ -39,8 +39,8 @@ end
 DataMapper.auto_upgrade!
 
 # dropbox api
-dbkey = File.read(".dbkey")
-dbsecret = File.read(".dbsecret")
+set :dbkey, File.read(".dbkey")
+set :dbsecret, File.read(".dbsecret")
 
 class Numeric
   def to_human
@@ -52,6 +52,29 @@ class Numeric
   end
 end
 
+
+# ----------------------------------------------
+# HELPER METHODS
+# ----------------------------------------------
+
+def redirect_with_authenticated_dropboxsession(return_url)
+  dbsession = DropboxSession.new(settings.dbkey, settings.dbsecret)
+  session[:unverified_dropboxsession] = dbsession.serialize
+
+  redirect dbsession.get_authorize_url(return_url)
+end
+
+def retrieve_authenticated_dropboxsession
+    # the user has returned from Dropbox
+    # we've been authorized, so now request an access_token
+  dbsession = DropboxSession.deserialize(session.delete(:unverified_dropboxsession))
+  dbsession.get_access_token
+  return dbsession
+end
+
+
+# ----------------------------------------------
+# ROUTES
 # ----------------------------------------------
 
 # user visits homepage
@@ -75,10 +98,8 @@ get '/' do
     haml :index
   else
     @@log.info "Creating account for \"#{session[:username]}\"."
-    # the user has returned from Dropbox
-    # we've been authorized, so now request an access_token
-    dbsession = DropboxSession.deserialize(session[:dropbox_session])
-    dbsession.get_access_token
+
+    dbsession = retrieve_authenticated_dropboxsession
 
     dbclient = DropboxClient.new(dbsession)
 
@@ -133,12 +154,10 @@ post '/' do
 
   return haml(:index) if @error
 
-  dbsession = DropboxSession.new(dbkey, dbsecret)
-  session[:dropbox_session] = dbsession.serialize #serialize and save this DropboxSession
   session[:username] = username
 
   # send them out to authenticate us
-  redirect dbsession.get_authorize_url(url('/'))
+  redirect_with_authenticated_dropboxsession(url('/'))
 end
 
 get "/js/app.js" do
