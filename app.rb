@@ -57,6 +57,13 @@ end
 # HELPER METHODS
 # ----------------------------------------------
 
+def get_user
+  puts "getting user"
+  user = User.get(params[:username])
+
+  # should we check if we're still authenticated?
+end
+
 def redirect_with_authenticated_dropboxsession(return_url)
   dbsession = DropboxSession.new(settings.dbkey, settings.dbsecret)
   session[:unverified_dropboxsession] = dbsession.serialize
@@ -168,14 +175,6 @@ end
 get "/logout" do
   session.clear
   redirect "/"
-end
-
-def get_user
-  puts "getting user"
-  user = User.get(params[:username])
-
-  # check if we're still authenticated
-
 end
 
 get "/:username" do
