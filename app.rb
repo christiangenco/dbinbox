@@ -5,6 +5,7 @@ require 'haml'
 require 'coffee-script'
 # database from http://datamapper.org/getting-started.html
 require 'dm-core'
+require 'dm-types'
 require 'dm-migrations'
 require 'dm-validations'
 
@@ -34,6 +35,7 @@ class User
   property :shared, Integer
   property :normal, Integer
   property :created_at, DateTime
+  property :password, BCryptHash
 end
 # Automatically create the tables if they don't exist
 DataMapper.auto_upgrade!
@@ -57,11 +59,24 @@ end
 # HELPER METHODS
 # ----------------------------------------------
 
-def get_user
+def get_user(username = params[:username])
   puts "getting user"
-  user = User.get(params[:username])
+  user = User.get(username)
 
   # should we check if we're still authenticated?
+end
+
+def is_allowed_to_upload_for(username)
+  return true if get_user(username).password.nil?
+
+  paths = session[:allowed_upload_paths]
+  return false if paths.nil?
+  return paths.include?(username)
+end
+
+def allow_uploads_for(username)
+  session[:allowed_upload_paths] ||= Set.new
+  session[:allowed_upload_paths] << username.to_s
 end
 
 def redirect_with_authenticated_dropboxsession(return_url)
@@ -114,7 +129,7 @@ get '/' do
     account_info = dbclient.account_info
     puts "account_info = #{account_info}"
     quota = account_info["quota_info"]
-    
+
     @user = User.create(
       username: session[:username],
       dropbox_session: dbsession.serialize,
@@ -184,6 +199,7 @@ get "/:username" do
     @error = "Username '#{params[:username]}' not found. Would you like to link it with a Dropbox account?"
     return haml :index
   end
+  @allowed_to_upload = is_allowed_to_upload_for(params[:username])
   haml :upload
 end
 
@@ -193,8 +209,9 @@ post '/:username' do
 
   # IE 9 and below tries to download the result if Content-Type is application/json
   content_type (request.user_agent.index(/MSIE [6-9]/) ? 'text/plain' : :json)
-  
+
   return unless @user = get_user
+  return unless is_allowed_to_upload_for(params[:username])
 
   redirect '/' unless @user.dropbox_session
   @dbsession = DropboxSession.deserialize(@user.dropbox_session)
@@ -239,6 +256,7 @@ post '/:username/send_text' do
   puts "post /#{params['username']}/send_text"
 
   return unless @user = get_user
+  return unless is_allowed_to_upload_for(params[:username])
 
   redirect '/' unless @user.dropbox_session
   @dbsession = DropboxSession.deserialize(@user.dropbox_session)
@@ -277,4 +295,48 @@ post '/:username/send_text' do
         :name        => file[:filename]
       }
     end.to_json
+end
+
+post '/:username/access_code' do
+  # We asked the user for this dbinbox's access code.
+
+  @user = get_user
+
+  if @user.password == params[:access_code]
+    allow_uploads_for(@user.username)
+  end
+
+  redirect url("/#{params[:username]}")
+end
+
+post '/:username/admin' do
+  # The user wants to change the dbinbox settings.
+  # First check with Dropbox to make sure they own the account
+
+  session[:access_code] = BCrypt::Password.create(params[:access_code])
+  redirect_with_authenticated_dropboxsession(url("/#{params[:username]}/admin"))
+end
+
+get '/:username/admin' do
+  # The user wants to change the dbinbox settings.
+  # Now we're coming back from Dropbox's authentication.
+
+  if params[:oauth_token].nil?
+    redirect url("/#{params[:username]}")
+  end
+
+  @user = get_user
+
+  dbsession = retrieve_authenticated_dropboxsession
+  dbclient = DropboxClient.new(dbsession)
+  account_info = dbclient.account_info
+
+  if @user.uid.to_i == account_info['uid']
+    @user.password = session.delete(:access_code)
+    @user.save
+    redirect url("/#{@user.username}")
+  else
+    @error = "You must be the owner of the Dropbox to change the access code"
+    redirect url("/#{@user.username}")
+  end
 end

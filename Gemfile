@@ -7,6 +7,7 @@ gem 'haml'
 gem 'coffee-script'
 # database
 gem 'dm-core'
+gem 'dm-types'
 gem 'dm-migrations'
 gem 'dm-validations'
 gem 'dm-sqlite-adapter'
