@@ -1,0 +1,44 @@
+.span8.offset2.instructions drag your file(s) here to upload
+
+%form.span12{action: params["username"], multipart: true, id: 'upload'}
+  %table.filelist
+    %tbody.files
+  %span.btn.btn-primary.fileinput-button#upload_button{style: "float: right"}
+    %i.icon-plus.icon-white
+    %span Choose files
+    %input(type="file" name="files[]" multiple)
+  %span.btn#show_send_message{style: "float: right; margin-right: 10px; display: none"}
+    %i.icon-edit.icon-black
+    %span Send Message
+  %span.btn#show_admin{style: "float: right; margin-right: 10px;"}
+    %i.icon-wrench.icon-black
+    %span Admin
+  .span10.fileupload-progress.fade
+    .progress.progress-success.progress-striped.active
+    .bar{:style => "width:0%;"}
+    .progress-extended &nbsp;
+  .fileupload-loading
+
+#dropzone
+  %span drop your file(s) to upload
+
+.clearfix
+
+%form.form-horizontal.span12{action: params["username"] + "/send_text", id: 'send_text', method: 'post'}
+  %legend
+    %img(class="modal-h-img sprite s_page_white_gray_32 modal-h-img" src="img/icon_spacer.gif")
+    Send text file message
+  .control-group
+    %label.control-label(for="filename") Filename
+    .controls
+      .input-append.input-prepend
+        .add-on#timestamp=Time.new.strftime("%Y-%m-%d-%H.%M.%S")
+        %input(type="text" name="filename" id="filename" placeholder="optional ")
+        .add-on .txt
+  .control-group
+    %label.control-label(for="message") Message
+    .controls
+      %textarea(name="message")
+  %input.btn.btn-primary(type="submit" value="Send" style="float: right")
+
+.clearfix

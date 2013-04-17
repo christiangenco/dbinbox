@@ -6,76 +6,19 @@
   %form.span8#re-authenticate{action: "/", method: "post"}
     %fieldset.control-group
       %input.span4#username(type="hidden" name="username" value="#{params['username']}")
-      %button.btn.btn-warning(type='submit' title="Re-authenticate to activate your account") 
+      %button.btn.btn-warning(type='submit' title="Re-authenticate to activate your account")
         %i.icon-warning-sign.icon-white
         %span Re-authenticate
       %span.help-inline It looks like this app was unauthenticated from Dropbox.
 
-.span8.offset2.instructions drag your file(s) here to upload
-
-
-%form.span12{action: params["username"], multipart: true, id: 'upload'}
-  %table.filelist
-    %tbody.files 
-    -#
-      %tr
-        %td.filename-col.span7
-          %img(class="sprite s_page_white_get" src="img/icon_spacer.gif")
-          %span.filename IMG_2121.PNG
-          %span.size - 203.87 KB
-        %td.info-col.span4
-          uploading to Dropbox...
-        %td.status-col.span1
-          %img(src="img/ajax-loading-small.gif" class="")
-      %tr
-        %td.filename-col.span7
-          %img(class="sprite s_page_white_picture" src="img/icon_spacer.gif")
-          %span.filename IMG_2121.PNG
-          %span.size - 203.87 KB
-        %td.info-col.span4
-          error
-        %td.status-col.span1
-          %img(src="img/icon_spacer.gif" class="sprite s_synced ")
-  %span.btn.btn-primary.fileinput-button#upload_button{style: "float: right"}
-    %i.icon-plus.icon-white
-    %span Choose files
-    %input(type="file" name="files[]" multiple)
-  %span.btn#show_send_message{style: "float: right; margin-right: 10px; display: none"}
-    %i.icon-edit.icon-black
-    %span Send Message
-  .span10.fileupload-progress.fade
-    .progress.progress-success.progress-striped.active
-    .bar{:style => "width:0%;"}
-    .progress-extended &nbsp;
-  .fileupload-loading
-
-#dropzone
-  %span drop your file(s) to upload
-
-.clearfix
-
-%form.form-horizontal.span12{action: params["username"] + "/send_text", id: 'send_text', method: 'post'}
-  %legend
-    %img(class="modal-h-img sprite s_page_white_gray_32 modal-h-img" src="img/icon_spacer.gif")
-    Send text file message
-  .control-group
-    %label.control-label(for="filename") Filename
-    .controls
-      .input-append.input-prepend
-        .add-on#timestamp=Time.new.strftime("%Y-%m-%d-%H.%M.%S")
-        %input(type="text" name="filename" id="filename" placeholder="optional ")
-        .add-on .txt
-  .control-group
-    %label.control-label(for="message") Message
-    .controls
-      %textarea(name="message")
-  %input.btn.btn-primary(type="submit" value="Send" style="float: right")
-
-.clearfix
+-if @user.password.nil? || @allowed_to_upload
+  = haml(:upload_dropzone, :layout => false)
+-else
+  = haml(:upload_access_code_required, :layout => false)
 
 %hr
 
 %p.span8
-  Found a bug? This software is open source! Please let me know on 
+  Found a bug? This software is open source! Please let me know on
   %a(href="https://github.com/christiangenco/dbinbox") this project's github page
   and I'll try to fix it! :)
