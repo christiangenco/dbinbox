@@ -2,25 +2,33 @@
 %html
   %head
     %title dbinbox
-    %link(rel="stylesheet" href="css/bootstrap.min.css")
-    %link(rel="stylesheet" href="css/bootstrap-responsive.min.css")
+    %link{rel: "stylesheet", href: url("/css/bootstrap.min.css")}
+    %link{rel: "stylesheet", href: url("/css/bootstrap-responsive.min.css")}
     /[if lt IE 7]
-      %link(rel="stylesheet" href="http://blueimp.github.com/cdn/css/bootstrap-ie6.min.css")
-    %link(rel="stylesheet" href="css/jquery.fileupload-ui.css")
-    %link(rel="stylesheet" href="css/style.css")
+      %link{rel: "stylesheet", href: "http://blueimp.github.com/cdn/css/bootstrap-ie6.min.css"}
+    %link{rel: "stylesheet", href: url("/css/jquery.fileupload-ui.css")}
+    %link{rel: "stylesheet", href: url("/css/style.css")}
   %body
     .container
       =yield
-    %script(src="js/jquery.min.js")
-    %script(src="js/vendor/jquery.ui.widget.js")
-    %script(src="js/jquery.iframe-transport.js")
-    %script(src="js/jquery.fileupload.js")
-    %script(src="js/jquery.fileupload-fp.js")
-    %script(src="js/jquery.fileupload-ui.js")
+
+      %hr
+
+      %p.span8
+        Found a bug? This software is open source! Please let me know on
+        %a(href="https://github.com/christiangenco/dbinbox") this project's github page
+        and I'll try to fix it! :)
+
+    %script{src: url("/js/jquery.min.js")}
+    %script{src: url("/js/vendor/jquery.ui.widget.js")}
+    %script{src: url("/js/jquery.iframe-transport.js")}
+    %script{src: url("/js/jquery.fileupload.js")}
+    %script{src: url("/js/jquery.fileupload-fp.js")}
+    %script{src: url("/js/jquery.fileupload-ui.js")}
     / The Templates plugin is included to render the upload/download listings
-    %script(src="http://blueimp.github.com/JavaScript-Templates/tmpl.min.js")
+    %script{src: "http://blueimp.github.com/JavaScript-Templates/tmpl.min.js"}
     / %script(src="js/bootstrap-tooltip.js")
-    %script(src="js/app.js")
+    %script{src: url("/js/app.js")}
     / google analysics
     :javascript
       var _gaq = _gaq || [];

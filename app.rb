@@ -319,12 +319,13 @@ post '/:username/admin' do
 end
 
 get '/:username/admin' do
+  if !params[:oauth_token]
+    @user = get_user
+    return haml :admin
+  end
+
   # The user wants to change the dbinbox settings.
   # Now we're coming back from Dropbox's authentication.
-
-  if params[:oauth_token].nil?
-    redirect url("/#{params[:username]}")
-  end
 
   user = get_user
 

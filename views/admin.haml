@@ -1,0 +1,25 @@
+%h1.span12
+  %img(class="modal-h-img sprite s_upload_32 modal-h-img" src="img/icon_spacer.gif")
+  Change settings for #{@user.display_name}'s dbinbox
+
+%div{style: "margin-left: 20px; margin-bottom: 2em;"}
+  %p
+    If you are the owner of this Dropbox, you can change the
+    access code needed to upload files.
+  %p
+    When saving settings, you will be sent to Dropbox to
+    verify you own the account. Click "Allow" to allow this
+    change.
+
+%form.form-horizontal.span12{action: "/#{@user.username}/admin", id: 'admin_form', method: 'post'}
+  .control-group
+    %label.control-label(for="access_code") New Access Code
+    .controls
+      %input(type="text" name="access_code" id="access_code")
+  .control-group
+    %label.control-label(for="clear_access_code") Clear Access Code
+    .controls
+      %input(type="checkbox" name="clear_access_code" id="clear_access_code")
+  %input.btn.btn-primary(type="submit" value="Submit" style="float: right")
+
+.clearfix
