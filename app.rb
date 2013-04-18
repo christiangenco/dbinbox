@@ -326,27 +326,31 @@ get '/:username/admin' do
     redirect url("/#{params[:username]}")
   end
 
-  @user = get_user
+  user = get_user
 
   dbsession = retrieve_authenticated_dropboxsession
   dbclient = DropboxClient.new(dbsession)
   account_info = dbclient.account_info
 
-  unless @user.uid.to_i == account_info['uid']
+  unless user.uid.to_i == account_info['uid']
     @error = "You must be the owner of the Dropbox to change the access code"
-    redirect url("/#{@user.username}")
+    redirect url("/#{user.username}")
   end
+
+  # Replace the Dropbox session so people can re-link the app if they unlinked
+  # it from Dropbox
+  user.dropbox_session = dbsession.serialize
 
   # Get our variables out of the sesson so we don't accidentally reuse them
   access_code = session.delete(:access_code)
   clear_access_code = session.delete(:clear_access_code)
 
   if clear_access_code
-    @user.password = nil
+    user.password = nil
   elsif access_code
-    @user.password = access_code
+    user.password = access_code
   end
 
-  @user.save
-  redirect url("/#{@user.username}")
+  user.save
+  redirect url("/#{user.username}")
 end
