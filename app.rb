@@ -355,3 +355,41 @@ get '/:username/admin' do
   user.save
   redirect url("/#{user.username}")
 end
+
+
+post '/:username/delete' do
+  # The user wants to delete their dbinbox account.
+  # First make sure they confirmed they want this.
+
+  if params[:delete_confirmation] != "DELETE"
+    redirect url("/#{params[:username]}/admin")
+  end
+
+  # Now check with Dropbox to make sure they own the account
+  redirect_with_authenticated_dropboxsession(url("/#{params[:username]}/delete"))
+end
+
+get '/:username/delete' do
+  if !params[:oauth_token]
+    @user = get_user
+    return haml :admin
+  end
+
+  # The user wants to change the dbinbox settings.
+  # Now we're coming back from Dropbox's authentication.
+
+  user = get_user
+
+  dbsession = retrieve_authenticated_dropboxsession
+  dbclient = DropboxClient.new(dbsession)
+  account_info = dbclient.account_info
+
+  unless user.uid.to_i == account_info['uid']
+    @error = "You must be the owner of the Dropbox to delete the dbinbox account."
+    redirect url("/#{user.username}")
+  end
+
+  user.destroy
+
+  redirect url("/")
+end

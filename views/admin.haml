@@ -25,4 +25,24 @@
       %input(type="checkbox" name="clear_access_code" id="clear_access_code")
   %input.btn.btn-primary(type="submit" value="Submit" style="float: right")
 
+
+
+%h1.span12
+  %img(class="modal-h-img sprite s_application_delete_32 modal-h-img" src="img/icon_spacer.gif")
+  Delete #{@user.display_name}'s dbinbox account
+
+%div{style: "margin-left: 20px; margin-bottom: 2em;"}
+  %p
+    Pressing the button below will unlink dbinbox from your Dropbox account.
+  %p
+    The URL <code>#{url(@user.username)}</code> will be available for anyone to register
+    with his or her Dropbox account.
+
+%form.form-horizontal.span12{action: "/#{@user.username}/delete", id: 'unlink_form', method: 'post'}
+  .control-group
+    %label.control-label(for="delete_confirmation") Type "DELETE"
+    .controls
+      %input(type="text" name="delete_confirmation" id="delete_confirmation")
+  %input.btn.btn-danger(type="submit" value="Delete account" style="float: right")
+
 .clearfix
