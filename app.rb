@@ -348,7 +348,7 @@ get '/:username/admin' do
 
   if clear_access_code
     user.password = nil
-  elsif access_code
+  elsif access_code && !(access_code == "")
     user.password = access_code
   end
 
