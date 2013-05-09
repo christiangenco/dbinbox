@@ -42,7 +42,7 @@
   .control-group
     %label.control-label(for="delete_confirmation") Type "DELETE"
     .controls
-      %input(type="text" name="delete_confirmation" id="delete_confirmation")
-  %input.btn.btn-danger(type="submit" value="Delete account" style="float: right")
+      %input(type="text" name="delete_confirmation" id="delete_confirmation" onkeyup="if($(this).val()=='DELETE'){$('#delete_button').removeAttr('disabled').removeClass('disabled');}")
+        %input#delete_button.btn.btn-danger.disabled(type="submit" value="Delete account" style="float: right" disabled="disabled")
 
 .clearfix

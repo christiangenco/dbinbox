@@ -359,13 +359,8 @@ end
 
 post '/:username/delete' do
   # The user wants to delete their dbinbox account.
-  # First make sure they confirmed they want this.
+  # First check with Dropbox to make sure they own the account
 
-  if params[:delete_confirmation] != "DELETE"
-    redirect url("/#{params[:username]}/admin")
-  end
-
-  # Now check with Dropbox to make sure they own the account
   redirect_with_authenticated_dropboxsession(url("/#{params[:username]}/delete"))
 end
 
