@@ -1,0 +1,11 @@
+.span4.offset8{style: "text-align: right;"}
+  - if session[:registered]
+    = session[:username]
+    %a{href: url("/#{@user.username}/admin")} settings
+    |
+    %a{href: url("/logout")} sign out
+  - else
+    %a{href: url("/login")} sign in
+    |
+    %a{href: url("/")} sign up
+    with Dropbox

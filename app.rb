@@ -8,6 +8,7 @@ require 'dm-core'
 require 'dm-types'
 require 'dm-migrations'
 require 'dm-validations'
+require 'pry'
 
 enable :sessions
 production = !File.exists?("../../projects")
@@ -41,7 +42,7 @@ end
 DataMapper.auto_upgrade!
 
 # dropbox api
-set :dbkey, File.read(".dbkey")
+set :dbkey,    File.read(".dbkey")
 set :dbsecret, File.read(".dbsecret")
 
 class Numeric
@@ -54,49 +55,6 @@ class Numeric
   end
 end
 
-
-# ----------------------------------------------
-# HELPER METHODS
-# ----------------------------------------------
-
-def get_user(username = params[:username])
-  puts "getting user"
-  user = User.get(username)
-
-  # should we check if we're still authenticated?
-end
-
-def is_allowed_to_upload_for(username)
-  return true if get_user(username).password.nil?
-
-  paths = session[:allowed_upload_paths]
-  return false if paths.nil?
-  return paths.include?(username)
-end
-
-def allow_uploads_for(username)
-  session[:allowed_upload_paths] ||= Set.new
-  session[:allowed_upload_paths] << username.to_s
-end
-
-def redirect_with_authenticated_dropboxsession(return_url)
-  dbsession = DropboxSession.new(settings.dbkey, settings.dbsecret)
-  session[:unverified_dropboxsession] = dbsession.serialize
-
-  redirect dbsession.get_authorize_url(return_url)
-end
-
-def retrieve_authenticated_dropboxsession
-    # the user has returned from Dropbox
-    # we've been authorized, so now request an access_token
-  dbsession = DropboxSession.deserialize(session.delete(:unverified_dropboxsession))
-  dbsession.get_access_token
-  return dbsession
-end
-
-
-# ----------------------------------------------
-# ROUTES
 # ----------------------------------------------
 
 # user visits homepage
@@ -120,8 +78,10 @@ get '/' do
     haml :index
   else
     @@log.info "Creating account for \"#{session[:username]}\"."
-
-    dbsession = retrieve_authenticated_dropboxsession
+    # the user has returned from Dropbox
+    # we've been authorized, so now request an access_token
+    dbsession = DropboxSession.deserialize(session[:dropbox_session])
+    dbsession.get_access_token
 
     dbclient = DropboxClient.new(dbsession)
 
@@ -129,7 +89,7 @@ get '/' do
     account_info = dbclient.account_info
     puts "account_info = #{account_info}"
     quota = account_info["quota_info"]
-
+    
     @user = User.create(
       username: session[:username],
       dropbox_session: dbsession.serialize,
@@ -172,14 +132,18 @@ post '/' do
     @error = "Your username must only contain letters." if !(username =~ /^\w+$/)
   elsif username.empty?
     @error = "Your username can't be blank! I need to use that one! D:"
+  elsif username =~ /^admin|login|logout|delete$/
+    @error = "Nice try, smarty pants."
   end
 
   return haml(:index) if @error
 
+  dbsession = DropboxSession.new(settings.dbkey, settings.dbsecret)
+  session[:dropbox_session] = dbsession.serialize #serialize and save this DropboxSession
   session[:username] = username
 
   # send them out to authenticate us
-  redirect_with_authenticated_dropboxsession(url('/'))
+  redirect dbsession.get_authorize_url(url('/'))
 end
 
 get "/js/app.js" do
@@ -187,19 +151,71 @@ get "/js/app.js" do
   coffee File.open("./app.coffee").read
 end
 
+get "/login" do
+  dbsession = DropboxSession.new(settings.dbkey, settings.dbsecret)
+  session[:dropbox_session] = dbsession.serialize
+  redirect dbsession.get_authorize_url(url('/admin'))
+end
+
 get "/logout" do
   session.clear
   redirect "/"
 end
 
+get "/admin" do
+  if params[:oauth_token] 
+    # just came from being authenticated from Dropbox
+    # stash this user's username and update their session
+    dbsession = DropboxSession.deserialize(session[:dropbox_session])
+    dbsession.get_access_token
+    dbclient = DropboxClient.new(dbsession)
+    @user = User.first(:uid => dbclient.account_info["uid"])
+
+    # update the user with the new session in case they're re-authenticating
+    @user.update(:dropbox_session => dbsession.serialize)
+
+    session[:username] = @user.username
+    session[:registered] = true
+    return haml :admin
+  elsif session[:registered]
+    # already registered; render the admin panel
+
+    @user = User.get(session[:username])
+
+    return haml :admin
+  else
+    # need to get authenticated by Dropbox first
+    redirect url('/signin')
+  end
+
+end
+
+post "/admin" do
+  @user = User.get(session[:username])
+  redirect url('/signin') unless @user
+
+  @user.update(:password => params[:access_code])
+  return haml :admin
+end
+
+post "/delete" do
+  if session[:registered]
+    @user = User.get(session[:username])
+    @user.destroy
+    session.clear
+    redirect url('/')
+  else
+    redirect url('/signin')
+  end
+end
+
 get "/:username" do
   @@log.info "/#{params[:username]}"
-  @user = get_user
+  @user = User.get(params[:username])
   if !@user
     @error = "Username '#{params[:username]}' not found. Would you like to link it with a Dropbox account?"
     return haml :index
   end
-  @allowed_to_upload = is_allowed_to_upload_for(params[:username])
   haml :upload
 end
 
@@ -209,9 +225,8 @@ post '/:username' do
 
   # IE 9 and below tries to download the result if Content-Type is application/json
   content_type (request.user_agent.index(/MSIE [6-9]/) ? 'text/plain' : :json)
-
-  return unless @user = get_user
-  return unless is_allowed_to_upload_for(params[:username])
+  
+  return unless @user = User.get(params[:username])
 
   redirect '/' unless @user.dropbox_session
   @dbsession = DropboxSession.deserialize(@user.dropbox_session)
@@ -255,8 +270,7 @@ post '/:username/send_text' do
 
   puts "post /#{params['username']}/send_text"
 
-  return unless @user = get_user
-  return unless is_allowed_to_upload_for(params[:username])
+  return unless @user = User.get(params[:username])
 
   redirect '/' unless @user.dropbox_session
   @dbsession = DropboxSession.deserialize(@user.dropbox_session)
@@ -295,96 +309,4 @@ post '/:username/send_text' do
         :name        => file[:filename]
       }
     end.to_json
-end
-
-post '/:username/access_code' do
-  # We asked the user for this dbinbox's access code.
-
-  @user = get_user
-
-  if @user.password == params[:access_code]
-    allow_uploads_for(@user.username)
-  end
-
-  redirect url("/#{params[:username]}")
-end
-
-post '/:username/admin' do
-  # The user wants to change the dbinbox settings.
-  # First check with Dropbox to make sure they own the account
-
-  session[:clear_access_code] = params[:clear_access_code]
-  session[:access_code] = BCrypt::Password.create(params[:access_code])
-  redirect_with_authenticated_dropboxsession(url("/#{params[:username]}/admin"))
-end
-
-get '/:username/admin' do
-  if !params[:oauth_token]
-    @user = get_user
-    return haml :admin
-  end
-
-  # The user wants to change the dbinbox settings.
-  # Now we're coming back from Dropbox's authentication.
-
-  user = get_user
-
-  dbsession = retrieve_authenticated_dropboxsession
-  dbclient = DropboxClient.new(dbsession)
-  account_info = dbclient.account_info
-
-  unless user.uid.to_i == account_info['uid']
-    @error = "You must be the owner of the Dropbox to change the access code"
-    redirect url("/#{user.username}")
-  end
-
-  # Replace the Dropbox session so people can re-link the app if they unlinked
-  # it from Dropbox
-  user.dropbox_session = dbsession.serialize
-
-  # Get our variables out of the sesson so we don't accidentally reuse them
-  access_code = session.delete(:access_code)
-  clear_access_code = session.delete(:clear_access_code)
-
-  if clear_access_code
-    user.password = nil
-  elsif access_code && !(access_code == "")
-    user.password = access_code
-  end
-
-  user.save
-  redirect url("/#{user.username}")
-end
-
-
-post '/:username/delete' do
-  # The user wants to delete their dbinbox account.
-  # First check with Dropbox to make sure they own the account
-
-  redirect_with_authenticated_dropboxsession(url("/#{params[:username]}/delete"))
-end
-
-get '/:username/delete' do
-  if !params[:oauth_token]
-    @user = get_user
-    return haml :admin
-  end
-
-  # The user wants to change the dbinbox settings.
-  # Now we're coming back from Dropbox's authentication.
-
-  user = get_user
-
-  dbsession = retrieve_authenticated_dropboxsession
-  dbclient = DropboxClient.new(dbsession)
-  account_info = dbclient.account_info
-
-  unless user.uid.to_i == account_info['uid']
-    @error = "You must be the owner of the Dropbox to delete the dbinbox account."
-    redirect url("/#{user.username}")
-  end
-
-  user.destroy
-
-  redirect url("/")
 end

@@ -1,3 +1,5 @@
+= haml(:_signin, :layout => false)
+
 .row
   .span9
     %h1
@@ -13,7 +15,7 @@
         %span Re-authenticate
       %span.help-inline It looks like this app was unauthenticated from Dropbox.
 
--if @user.password.nil? || @allowed_to_upload
+-if @user.password.nil? || @user.password == params[:password]
 
   -# this dropbox is unsecured or the visitor has entered
   -# the correct access code already.
@@ -65,17 +67,13 @@
   -# the visitor must enter the correct access code
   -# before uploading files
 
-  %form.form-horizontal.span12{action: params["username"] + "/access_code", method: "post"}
+  %form.form-horizontal.span12{action: params["username"], method: "GET"}
     %p
-      This dbinbox requires entering the correct access code before uploading
-      files.
-    %p
-      If you are the owner of this Dropbox account, you may change the
-      access code by clicking the Admin button.
+      Enter the correct code to upload files.
     .control-group
-      %label.control-label(for="access_code") Access Code
+      %label.control-label(for="password") Access Code
       .controls
-        %input(type="text" name="access_code" id="access_code")
+        %input(type="text" name="password" id="password")
     %button.btn.btn-primary{type: "submit", style: "float: right; margin-right: 10px;"}
       Submit
     %span.btn#show_admin_form{style: "float: right; margin-right: 10px; display: none"}

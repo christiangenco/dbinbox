@@ -1,3 +1,5 @@
+= haml(:_signin, :layout => false)
+
 %h1.span12
   %img(class="modal-h-img sprite s_upload_32 modal-h-img" src="img/icon_spacer.gif")
   Change settings for #{@user.display_name}'s dbinbox
@@ -14,18 +16,16 @@
     verify you own the account. Click "Allow" to allow this
     change.
 
-%form.form-horizontal.span12{action: "/#{@user.username}/admin", id: 'admin_form', method: 'post'}
+%form.form-horizontal.span12{action: "/admin", id: 'admin_form', method: 'post'}
   .control-group
     %label.control-label(for="access_code") New Access Code
     .controls
-      %input(type="text" name="access_code" id="access_code")
+      %input{:type => "text", :name => "access_code", :id => "access_code"}
   .control-group
     %label.control-label(for="clear_access_code") Clear Access Code
     .controls
       %input(type="checkbox" name="clear_access_code" id="clear_access_code")
-  %input.btn.btn-primary(type="submit" value="Submit" style="float: right")
-
-
+  %input.btn.btn-primary(type="submit" value="set code" style="float: right")
 
 %h1.span12
   %img(class="modal-h-img sprite s_application_delete_32 modal-h-img" src="img/icon_spacer.gif")
@@ -38,7 +38,7 @@
     The URL <code>#{url(@user.username)}</code> will be available for anyone to register
     with his or her Dropbox account.
 
-%form.form-horizontal.span12{action: "/#{@user.username}/delete", id: 'unlink_form', method: 'post'}
+%form.form-horizontal.span12{action: "/delete", id: 'unlink_form', method: 'post'}
   .control-group
     %label.control-label(for="delete_confirmation") Type "DELETE"
     .controls
