@@ -221,7 +221,7 @@ end
 
 post '/:username' do
   filenames = params[:files].map{|f| f[:filename]}.join(', ')
-  @@log.info "Uploading files to /#{params[:username]}: #{filenames}"
+  @@log.info "Uploading #{params[:files].size} files to /#{params[:username]}: #{filenames}"
 
   # IE 9 and below tries to download the result if Content-Type is application/json
   content_type (request.user_agent.index(/MSIE [6-9]/) ? 'text/plain' : :json)
