@@ -1,7 +1,7 @@
 .span4.offset8{style: "text-align: right;"}
   - if session[:registered]
     = session[:username]
-    %a{href: url("/#{@user.username}/admin")} settings
+    %a{href: url("/admin")} settings
     |
     %a{href: url("/logout")} sign out
   - else
