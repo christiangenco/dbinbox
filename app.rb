@@ -11,8 +11,7 @@ require 'dm-validations'
 require 'pry'
 
 enable :sessions
-production = !File.exists?("../../projects")
-
+production = !File.exists?("../../../projects")
 directory = production ? File.expand_path("../../shared") : Dir.pwd
 DataMapper.setup(:default, "sqlite3://#{File.join(directory, "users.db")}")
 
@@ -266,7 +265,7 @@ post '/:username/send_text' do
   @@log.info "Sending text to /#{params[:username]}: \"#{params["message"]}\""
 
   # IE 9 and below tries to download the result if Content-Type is application/json
-  content_type (request.user_agent.index(/MSIE [6-9]/) ? 'text/plain' : :json)
+  content_type (request.user_agent && request.user_agent.index(/MSIE [6-9]/) ? 'text/plain' : :json)
 
   puts "post /#{params['username']}/send_text"
 
