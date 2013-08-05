@@ -90,17 +90,17 @@ get '/' do
     quota = account_info["quota_info"]
     
     @user = User.create(
-      username: session[:username],
-      dropbox_session: dbsession.serialize,
-      # referral_link: account_info["referral_link"],
-      authenticated: true,
-      display_name: account_info["display_name"],
-      uid: account_info["uid"],
-      country: account_info["country"],
-      quota: quota["quota"],
-      normal: quota["normal"],
-      shared: quota["shared"],
-      created_at: Time.now
+      :username        => session[:username],
+      :dropbox_session => dbsession.serialize,
+      # :referral_link => account_info["referral_link"],
+      :authenticated   => true,
+      :display_name    => account_info["display_name"],
+      :uid             => account_info["uid"],
+      :country         => account_info["country"],
+      :quota           => quota["quota"],
+      :normal          => quota["normal"],
+      :shared          => quota["shared"],
+      :created_at      => Time.now
     )
 
     if @user.saved?
