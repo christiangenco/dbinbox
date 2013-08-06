@@ -21,6 +21,12 @@ logdir = File.join(directory, "log")
 Dir.mkdir(logdir) unless File.directory? logdir
 @@log = Logger.new(File.join(logdir, "dbinbox.log"))
 
+# from http://stackoverflow.com/questions/8414395/verb-agnostic-matching-in-sinatra
+def self.get_or_post(url,&block)
+  get(url,&block)
+  post(url,&block)
+end
+
 class User
   include DataMapper::Resource
   property :username, String, :key => true, :required => true, :unique => true, :format => /^\w+$/
@@ -261,7 +267,7 @@ post '/:username' do
   responses.to_json # an array of file description hashes
 end
 
-post '/:username/send_text' do
+get_or_post '/:username/send_text' do
   @@log.info "Sending text to /#{params[:username]}: \"#{params["message"]}\""
 
   # IE 9 and below tries to download the result if Content-Type is application/json
