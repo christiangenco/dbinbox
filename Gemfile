@@ -10,6 +10,13 @@ gem 'dm-core'
 gem 'dm-types'
 gem 'dm-migrations'
 gem 'dm-validations'
-gem 'dm-sqlite-adapter'
+
+group :sqlite do
+  gem 'dm-sqlite-adapter'
+end
+
+group :postgres do
+  gem 'dm-postgres-adapter'
+end
 
 gem 'thin'
