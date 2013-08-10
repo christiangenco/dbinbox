@@ -8,18 +8,32 @@ require 'dm-core'
 require 'dm-types'
 require 'dm-migrations'
 require 'dm-validations'
-require 'pry'
 
 enable :sessions
+
 production = !File.exists?("../../../projects")
 directory = production ? File.expand_path("../../shared") : Dir.pwd
-DataMapper.setup(:default, "sqlite3://#{File.join(directory, "users.db")}")
+
+# Use DATABASE_URL from the environment if we have it,
+# otherwise just use sqlite
+if ENV['DATABASE_URL']
+  database_url = ENV['DATABASE_URL']
+else
+  database_url = "sqlite3://#{File.join(directory, "users.db")}"
+end
+DataMapper.setup(:default, database_url)
 
 # enable logging
 require 'logger'
-logdir = File.join(directory, "log")
-Dir.mkdir(logdir) unless File.directory? logdir
-@@log = Logger.new(File.join(logdir, "dbinbox.log"))
+if ENV['LOG_TO_STDOUT']
+  logpath = STDOUT
+else
+  logdir = File.join(directory, "log")
+  Dir.mkdir(logdir) unless File.directory? logdir
+  logpath = File.join(logdir, "dbinbox.log")
+end
+@@log = Logger.new(logpath)
+@@log.level = Logger::Severity::INFO
 
 # from http://stackoverflow.com/questions/8414395/verb-agnostic-matching-in-sinatra
 def self.get_or_post(url,&block)
@@ -28,6 +42,8 @@ def self.get_or_post(url,&block)
 end
 
 class User
+  terabyte = 1024 * 1024 * 1024 * 1024
+
   include DataMapper::Resource
   property :username, String, :key => true, :required => true, :unique => true, :format => /^\w+$/
   property :dropbox_session, Text
@@ -37,9 +53,9 @@ class User
   property :email, String, :length => 250
   property :uid, String
   property :country, String
-  property :quota, Integer
-  property :shared, Integer
-  property :normal, Integer
+  property :quota, Integer, :min => 0, :max => 50 * terabyte
+  property :shared, Integer, :min => 0, :max => 50 * terabyte
+  property :normal, Integer, :min => 0, :max => 50 * terabyte
   property :created_at, DateTime
   property :password, BCryptHash
 end
@@ -47,8 +63,8 @@ end
 DataMapper.auto_upgrade!
 
 # dropbox api
-set :dbkey,    File.read(".dbkey")
-set :dbsecret, File.read(".dbsecret")
+set :dbkey,    ENV['DROPBOX_KEY'] || File.read(".dbkey")
+set :dbsecret, ENV['DROPBOX_SECRET'] || File.read(".dbsecret")
 
 class Numeric
   def to_human
