@@ -153,7 +153,7 @@ post '/' do
     @error = "Your username must only contain letters." if !(username =~ /^\w+$/)
   elsif username.empty?
     @error = "Your username can't be blank! I need to use that one! D:"
-  elsif username =~ /^admin|login|logout|delete$/
+  elsif username =~ /^admin|login|logout|delete|send$/
     @error = "Nice try, smarty pants."
   end
 
@@ -263,7 +263,7 @@ get_or_post '/send/:username/?*' do
   responses = params[:files].map do |file|
     begin
       # if things go normally, just return the hashed response
-      response = @client.put_file(file[:filename], file[:message] || file[:tempfile].read)
+      response = @client.put_file(File.join(@subfolder || '', file[:filename]), file[:message] || file[:tempfile].read)
       # alter some fields for simplicity on the client end
       response[:name]          = response["path"].gsub(/^\//,'')
       response[:size]          = response["bytes"]
