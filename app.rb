@@ -230,34 +230,40 @@ post "/delete" do
   end
 end
 
-get "/:username" do
-  @@log.info "/#{params[:username]}"
-  @user = User.get(params[:username])
-  if !@user
-    @error = "Username '#{params[:username]}' not found. Would you like to link it with a Dropbox account?"
-    return haml :index
-  end
-  haml :upload
-end
-
-post '/:username' do
-  filenames = params[:files].map{|f| f[:filename]}.join(', ')
-  @@log.info "Uploading #{params[:files].size} files to /#{params[:username]}: #{filenames}"
+get_or_post '/send/:username/?*' do
+  @subfolder = params[:splat].first
 
   # IE 9 and below tries to download the result if Content-Type is application/json
-  content_type (request.user_agent.index(/MSIE [6-9]/) ? 'text/plain' : :json)
-  
+  content_type (request.user_agent && request.user_agent.index(/MSIE [6-9]/) ? 'text/plain' : :json)
+
   return unless @user = User.get(params[:username])
 
   redirect '/' unless @user.dropbox_session
   @dbsession = DropboxSession.deserialize(@user.dropbox_session)
   @client    = DropboxClient.new(@dbsession, :app_folder)
 
-  # upload the posted file to dropbox keeping the same name
+  params[:files] ||= []
+
+  if message = params["message"]
+    @@log.info "Sending text to /#{params[:username]}: \"#{params["message"]}\""
+    puts "post /#{params['username']}/send_text"
+
+    message = params["message"]
+    # add header to message
+    # use @env['REMOTE_ADDR'] if request.ip doesn't work
+    message = "Uploaded #{Time.now.to_s} from #{request.ip}\r\n\r\n#{message}"
+
+    filename = Time.new.strftime("%Y-%m-%d-%H.%M.%S")
+    filename += " " + params["filename"] if params["filename"] && !params["filename"].empty?
+    filename += ".txt"
+
+    params[:files].push({:filename => filename, :message => message})
+  end
+
   responses = params[:files].map do |file|
     begin
       # if things go normally, just return the hashed response
-      response = @client.put_file(file[:filename], file[:tempfile].read)
+      response = @client.put_file(file[:filename], file[:message] || file[:tempfile].read)
       # alter some fields for simplicity on the client end
       response[:name]          = response["path"].gsub(/^\//,'')
       response[:size]          = response["bytes"]
@@ -283,51 +289,20 @@ post '/:username' do
   responses.to_json # an array of file description hashes
 end
 
-get_or_post '/:username/send_text' do
-  @@log.info "Sending text to /#{params[:username]}: \"#{params["message"]}\""
+get "/:username/?*" do
+  @@log.info "/#{params[:username]}"
+  @subfolder = params[:splat].first
+  @user = User.get(params[:username])
+  @action = "/send/" + params[:username] + (@subfolder ? "/" + @subfolder : "")
+  if !@user
+    @error = "Username '#{params[:username]}' not found. Would you like to link it with a Dropbox account?"
+    return haml :index
+  end
 
-  # IE 9 and below tries to download the result if Content-Type is application/json
-  content_type (request.user_agent && request.user_agent.index(/MSIE [6-9]/) ? 'text/plain' : :json)
-
-  puts "post /#{params['username']}/send_text"
-
-  return unless @user = User.get(params[:username])
-
-  redirect '/' unless @user.dropbox_session
-  @dbsession = DropboxSession.deserialize(@user.dropbox_session)
-  @client    = DropboxClient.new(@dbsession, :app_folder)
-
-  message = params["message"]
-  # add header to message
-  # use @env['REMOTE_ADDR'] if request.ip doesn't work
-  message = "Uploaded #{Time.now.to_s} from #{request.ip}\r\n\r\n#{message}"
-
-  filename = Time.new.strftime("%Y-%m-%d-%H.%M.%S")
-  filename += " " + params["filename"] if params["filename"] && !params["filename"].empty?
-  filename += ".txt"
-
-  begin
-      # if things go normally, just return the hashed response
-      response = @client.put_file(filename, message)
-      # alter some fields for simplicity on the client end
-      response[:name]          = response["path"].gsub(/^\//,'')
-      response[:size]          = response["bytes"]
-      response[:human_size]    = response["bytes"].to_human
-      response[:url]           = ""
-      response[:thumbnail_url] = ""
-      response[:delete_url]    = ""
-      response[:delete_type]   = "DELETE"
-      response
-    rescue DropboxAuthError
-      puts "DropboxAuthError"
-      session[:registered] = false
-      @user.authenticated  = false
-      @user.save
-
-      {
-        :error       => "Client not authorized.",
-        :error_class => 'DropboxAuthError',
-        :name        => file[:filename]
-      }
-    end.to_json
+  if @user.password.nil? || @user.password == params[:password]
+    haml :upload
+  else
+    haml :enter_password
+  end
 end
+

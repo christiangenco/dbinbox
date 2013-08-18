@@ -125,6 +125,7 @@ $ ->
     row = uploadRowHTML(filename)
     $('.filelist .files').append(row)
 
+    console.log form.attr("action")
     $.post(form.attr("action"), formData, (data, textStatus, jqXHR) -> 
       console.log("text uploaded")
       # re-enable everything
@@ -132,7 +133,7 @@ $ ->
       console.log(form)
       form[0].reset()
       submit_button.value = previous_submit_button_value
-      $(row).replaceWith(downloadRowHTML(data))
+      $(row).replaceWith(downloadRowHTML(data[0]))
     )
 
   # dropzone effect

@@ -5,79 +5,48 @@
     %h1
       %img(class="modal-h-img sprite s_upload_32 modal-h-img" src="/img/icon_spacer.gif")
       Send files to #{@user.display_name}
+      %small(style="font-size: 10pt")= "Dropbox/Apps/dbinbox/" + @subfolder
 
--if false
-  %form.span8#re-authenticate{action: "/", method: "post"}
-    %fieldset.control-group
-      %input.span4#username(type="hidden" name="username" value="#{params['username']}")
-      %button.btn.btn-warning(type='submit' title="Re-authenticate to activate your account")
-        %i.icon-warning-sign.icon-white
-        %span Re-authenticate
-      %span.help-inline It looks like this app was unauthenticated from Dropbox.
+.span8.offset2.instructions drag your file(s) here to upload
 
--if @user.password.nil? || @user.password == params[:password]
+%form.span12{action: @action, multipart: true, id: 'upload'}
+  %table.filelist
+    %tbody.files
+  %span.btn.btn-primary.fileinput-button#upload_button{style: "float: right"}
+    %i.icon-plus.icon-white
+    %span Choose files
+    %input(type="file" name="files[]" multiple)
+  %span.btn#show_send_message{style: "float: right; margin-right: 10px; display: none"}
+    %i.icon-edit.icon-black
+    %span Send Message
+  .span10.fileupload-progress.fade
+    .progress.progress-success.progress-striped.active
+    .bar{:style => "width:0%;"}
+    .progress-extended &nbsp;
+  .fileupload-loading
 
-  -# this dropbox is unsecured or the visitor has entered
-  -# the correct access code already.
+#dropzone
+  %span drop your file(s) to upload
 
-  .span8.offset2.instructions drag your file(s) here to upload
+.clearfix
 
-  %form.span12{action: params["username"], multipart: true, id: 'upload'}
-    %table.filelist
-      %tbody.files
-    %span.btn.btn-primary.fileinput-button#upload_button{style: "float: right"}
-      %i.icon-plus.icon-white
-      %span Choose files
-      %input(type="file" name="files[]" multiple)
-    %span.btn#show_send_message{style: "float: right; margin-right: 10px; display: none"}
-      %i.icon-edit.icon-black
-      %span Send Message
-    .span10.fileupload-progress.fade
-      .progress.progress-success.progress-striped.active
-      .bar{:style => "width:0%;"}
-      .progress-extended &nbsp;
-    .fileupload-loading
+%form.form-horizontal.span12{action: @action, id: 'send_text', method: 'post'}
+  %legend
+    %img(class="modal-h-img sprite s_page_white_gray_32 modal-h-img" src="/img/icon_spacer.gif")
+    Send text file message
+  .control-group
+    %label.control-label(for="filename") Filename
+    .controls
+      .input-append.input-prepend
+        .add-on#timestamp=Time.new.strftime("%Y-%m-%d-%H.%M.%S")
+        %input(type="text" name="filename" id="filename" placeholder="optional ")
+        .add-on .txt
+  .control-group
+    %label.control-label(for="message") Message
+    .controls
+      %textarea(name="message")
+  %input.btn.btn-primary(type="submit" value="Send" style="float: right")
 
-  #dropzone
-    %span drop your file(s) to upload
+.clearfix
 
-  .clearfix
 
-  %form.form-horizontal.span12{action: params["username"] + "/send_text", id: 'send_text', method: 'post'}
-    %legend
-      %img(class="modal-h-img sprite s_page_white_gray_32 modal-h-img" src="/img/icon_spacer.gif")
-      Send text file message
-    .control-group
-      %label.control-label(for="filename") Filename
-      .controls
-        .input-append.input-prepend
-          .add-on#timestamp=Time.new.strftime("%Y-%m-%d-%H.%M.%S")
-          %input(type="text" name="filename" id="filename" placeholder="optional ")
-          .add-on .txt
-    .control-group
-      %label.control-label(for="message") Message
-      .controls
-        %textarea(name="message")
-    %input.btn.btn-primary(type="submit" value="Send" style="float: right")
-
-  .clearfix
-
--else
-
-  -# the visitor must enter the correct access code
-  -# before uploading files
-
-  %form.form-horizontal.span12{action: params["username"], method: "GET"}
-    %p
-      Enter the correct code to upload files.
-    .control-group
-      %label.control-label(for="password") Access Code
-      .controls
-        %input(type="text" name="password" id="password")
-    %button.btn.btn-primary{type: "submit", style: "float: right; margin-right: 10px;"}
-      Submit
-    %span.btn#show_admin_form{style: "float: right; margin-right: 10px; display: none"}
-      %i.icon-wrench.icon-black
-      %span Admin
-
-  .clearfix
