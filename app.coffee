@@ -5,13 +5,13 @@ $ ->
     row = $(
       '<tr class="template-upload">' +
       '<td class="filename-col span7">' +
-      '<img class="sprite s_page_white_get" src="img/icon_spacer.gif" />' +
+      '<img class="sprite s_page_white_get" src="/img/icon_spacer.gif" />' +
       '<span class="name"></span>' +
       '<span class="size"></span>' +
       '</td>' +
       '<td class="info-col span4">uploading to Dropbox...</td>' +
       '<td class="status-col span1">' +
-      '<img class="" src="img/ajax-loading-small.gif" />' +
+      '<img class="" src="/img/ajax-loading-small.gif" />' +
       '</td>' +
       "</tr>"
     )
@@ -24,13 +24,13 @@ $ ->
     row = $(
       '<tr class="template-download">' +
       '<td class="filename-col span7">' +
-      '<img class="sprite s_page_white_get image_icon" src="img/icon_spacer.gif" />' +
+      '<img class="sprite s_page_white_get image_icon" src="/img/icon_spacer.gif" />' +
       '<span class="name"></span>' +
       '<span class="size"></span>' +
       '</td>' +
       '<td class="info-col span4"></td>' +
       '<td class="status-col span1">' +
-      '<img class="sprite s_synced status_image" src="img/icon_spacer.gif" />' +
+      '<img class="sprite s_synced status_image" src="/img/icon_spacer.gif" />' +
       '</td>' +
       "</tr>"
     )

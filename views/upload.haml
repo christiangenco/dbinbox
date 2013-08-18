@@ -3,7 +3,7 @@
 .row
   .span9
     %h1
-      %img(class="modal-h-img sprite s_upload_32 modal-h-img" src="img/icon_spacer.gif")
+      %img(class="modal-h-img sprite s_upload_32 modal-h-img" src="/img/icon_spacer.gif")
       Send files to #{@user.display_name}
 
 -if false
@@ -45,7 +45,7 @@
 
   %form.form-horizontal.span12{action: params["username"] + "/send_text", id: 'send_text', method: 'post'}
     %legend
-      %img(class="modal-h-img sprite s_page_white_gray_32 modal-h-img" src="img/icon_spacer.gif")
+      %img(class="modal-h-img sprite s_page_white_gray_32 modal-h-img" src="/img/icon_spacer.gif")
       Send text file message
     .control-group
       %label.control-label(for="filename") Filename
