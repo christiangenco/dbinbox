@@ -76,6 +76,11 @@ class Numeric
   end
 end
 
+# compile app.coffee
+File.open('./public/js/app.js', 'w'){|f|
+  f.puts CoffeeScript.compile(File.open("./public/js/app.coffee").read)
+}
+
 # ----------------------------------------------
 
 # user visits homepage
@@ -165,11 +170,6 @@ post '/' do
 
   # send them out to authenticate us
   redirect dbsession.get_authorize_url(url('/'))
-end
-
-get "/js/app.js" do
-  content_type "text/javascript"
-  coffee File.open("./app.coffee").read
 end
 
 get "/login" do
