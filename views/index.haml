@@ -8,9 +8,11 @@
     %fieldset.control-group{class: @error.nil? || @error.empty? ? "" : "error"}
       .input-prepend
         %span.add-on dbinbox.com/
-        %input.span4#username(placeholder="username" name="username" type="text" value="#{params['username']}")
-      %button.btn.btn-primary(type='submit' title="links with your Dropbox") link with your dropbox
+        %input.span4#username(placeholder="your_username_here" name="username" type="text" value="#{params['username']}")
+      %button.btn.btn-success(type='submit' title="links with Dropbox") link with Dropbox
       %span.help-inline=@error
+
+      %img(src="/img/dbinbox.gif" alt="dbinbox demo" style="box-shadow: 0px 10px 50px #888888; margin-top: 1em")
 -else
   %p{style: "color: green"} You're registered!
   %p
