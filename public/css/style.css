@@ -99,6 +99,17 @@ h1{
     /*opacity: 1;*/
 }
 
+/* buttons should be above the file upload div */
+#show_send_message,
+#upload_button {
+   float: right;
+   z-index: 2;
+}
+
+.file-upload-progress {
+  clear: both;
+}
+
 /* shamelessly adapted from https://www.dropbox.com/static/26477/css/main.css*/
 /*implements the following icons: 
  folder_app
