@@ -236,7 +236,10 @@ get_or_post '/send/:username/?*' do
   # IE 9 and below tries to download the result if Content-Type is application/json
   content_type (request.user_agent && request.user_agent.index(/MSIE [6-9]/) ? 'text/plain' : :json)
 
-  return unless @user = User.get(params[:username])
+  unless @user = User.get(params[:username])
+    status 404
+    return
+  end
 
   redirect '/' unless @user.dropbox_session
   @dbsession = DropboxSession.deserialize(@user.dropbox_session)
