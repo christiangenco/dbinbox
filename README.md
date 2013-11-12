@@ -1,6 +1,8 @@
 dbinbox
 ======
 
+**Notice**: this branch is not longer the deployed branch in preparation for handling financial data for premium features on dbinbox.com. This public branch can now be simplified to support single instance deployments on Heroku (or another PaaS), and won't need to support more than a single account.
+
 an inbox for your Dropbox. Try it out at [dbinbox.com](http://dbinbox.com)!
 
 By visiting your personal dbinbox url, non-Dropbox users will be able to upload files straight into a special inbox folder in your Dropbox.
